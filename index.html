@@ -354,55 +354,16 @@
       <div class="slide-inner">
         <p class="eyebrow">Week 3 · Weekly Report</p>
         <h1>3주차 주간 보고</h1>
-        <p class="lead">분석 단계(S0)를 닫고, 산출물 5종을 고정했다.<br />다음 주는 설계다.</p>
+        <p class="lead">이번 주는 분석 문서를 다 썼다.<br />다음 주는 화면·구조 설계다.</p>
         <div class="chips">
-          <span class="chip ok">M1 분석 완료</span>
-          <span class="chip ok">산출물 5종</span>
-          <span class="chip wait">설계 미결 7건 → 4–5주</span>
+          <span class="chip ok">분석 문서 5종 작성</span>
+          <span class="chip wait">다음 주에 정할 것 있음</span>
         </div>
         <p class="cover-team">
           Signal Guard · 실시간 교통신호 상태정보 오류검지<br />
           <b>조찬희</b> 기획·PM · <b>기경현</b> 백엔드·데이터<br />
           기간 1–3주 · 보고일 2026.09.13
         </p>
-      </div>
-    </section>
-
-    <section class="slide" data-title="요약">
-      <div class="slide-inner">
-        <p class="eyebrow">This week</p>
-        <h2>목표 대비 실적</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>항목</th>
-              <th>계획</th>
-              <th>실적</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>단계 목표</td>
-              <td>분석 산출물 고정 (M1)</td>
-              <td>완료. 범위·요구·백로그가 저장소에 있음</td>
-            </tr>
-            <tr>
-              <td>산출</td>
-              <td>정의서 4종 + 백로그/WBS</td>
-              <td>5종 작성·교차 검수</td>
-            </tr>
-            <tr>
-              <td>일정</td>
-              <td>1–3주 분석</td>
-              <td>3주 말 게이트 통과</td>
-            </tr>
-            <tr>
-              <td>미완</td>
-              <td>설계 입력(스택·표본 수 등)</td>
-              <td>미결 7건으로 넘김. 이번 주 범위 밖</td>
-            </tr>
-          </tbody>
-        </table>
       </div>
     </section>
 
@@ -426,27 +387,27 @@
             </tr>
             <tr>
               <td>제안요청서 요구사항 대응표</td>
-              <td>RFP 한 줄이 어디에 붙는지</td>
-              <td>39건 · 구현 7 / 부분 17 / 문서 15</td>
+              <td>공단 요청 39건을 수업에서 어디에 붙일지</td>
+              <td>구현 7 / 부분 17 / 문서만 15</td>
             </tr>
             <tr>
               <td>요구사항정의서</td>
-              <td>무엇을, 통과/실패로</td>
-              <td>FR·NFR ID · 수용 기준</td>
+              <td>무엇을 만들지, 테스트로 가릴 기준</td>
+              <td>기능·비기능 요구</td>
             </tr>
             <tr>
               <td>유스케이스·사용자 스토리</td>
               <td>누가, 어떤 흐름으로</td>
-              <td>UC 11 · US 33 (필수 29)</td>
+              <td>흐름 11개 · 구현 단위 33개</td>
             </tr>
             <tr>
               <td>제품 백로그 · WBS</td>
               <td>언제, 누가, 몇 주</td>
-              <td>15주 · Must 96 SP</td>
+              <td>15주 작업 목록</td>
             </tr>
           </tbody>
         </table>
-        <p class="note" style="margin-top:18px;">주 책임 <strong>조찬희</strong>, 데이터·RFP 교차 <strong>기경현</strong>. md 정본 + 제출용 docx/xlsx.</p>
+        <p class="note" style="margin-top:18px;">주 책임 <strong>조찬희</strong>, 데이터·제안요청서 교차 <strong>기경현</strong>. 원문은 md, 제출본은 docx/xlsx.</p>
       </div>
     </section>
 
@@ -455,11 +416,11 @@
         <p class="eyebrow">How we wrote</p>
         <h2>앞에서 뒤로만 내려가게 썼다</h2>
         <div class="chain">
-          <b>RFP</b><i>→</i>
+          <b>제안요청서</b><i>→</i>
           <b>정의서</b><i>왜·범위</i>
           <b>대응표</b><i>39건</i>
           <b>요구사항</b><i>무엇을</i>
-          <b>UC / US</b><i>누가</i>
+          <b>유스케이스</b><i>누가</i>
           <b>백로그</b><i>언제</i>
         </div>
         <div class="grid two">
@@ -468,7 +429,7 @@
             <ul>
               <li>한 ID에 검증 가능한 요구 하나</li>
               <li>모든 요구에 수용 기준</li>
-              <li>RFP ID 또는 EXT와 추적</li>
+              <li>제안요청서 번호와 우리 요구를 연결</li>
               <li>원본 수신은 덮지 않는다고 반복</li>
             </ul>
           </div>
@@ -492,19 +453,19 @@
         <div class="grid two">
           <div class="card">
             <h3>프로젝트정의서</h3>
-            <p>RFP 배경을 수업 범위로 줄였다. 수집→검지→관제→통제, 원본 불변, 실시간 API 명세와 UTIC 대체 경로를 적었다.</p>
+            <p>공단 제안요청서를 수업 범위로 줄였다. 수집→검지→관제→통제, 원본은 안 덮음, 실시간 API와 계획 데이터 대체 경로를 적었다.</p>
           </div>
           <div class="card">
-            <h3>RFP 대응표</h3>
-            <p>39건을 빠짐없이 구현 / 부분 구현 / 문서 대체로 나눴다. 소프트웨어 대상은 24건이다.</p>
+            <h3>제안요청서 대응표</h3>
+            <p>요청 39건을 빠짐없이 구현 / 부분 구현 / 문서만으로 나눴다. 프로그램으로 다루는 것은 24건이다.</p>
           </div>
           <div class="card">
             <h3>요구사항정의서</h3>
-            <p>정의서·RFP를 FR/NFR ID로 분해했다. v1.1에서 통제를 정보·계획·현장 요청으로 나눴다.</p>
+            <p>무엇을 만들지 ID로 쪼개고, 테스트로 통과·실패를 가릴 수 있게 적었다. 통제는 정보·계획·현장 요청으로 나눴다.</p>
           </div>
           <div class="card">
-            <h3>UC / US · 백로그</h3>
-            <p>UC 11을 상세 흐름으로 전개하고 US 33으로 쪼갰다. 필수 29건(96 SP)을 주당 16에 맞춰 스프린트에 넣었다.</p>
+            <h3>유스케이스 · 백로그</h3>
+            <p>흐름 11개, 구현 단위 33개로 나눴다. 필수 29개를 15주 일정에 넣었다.</p>
           </div>
         </div>
       </div>
@@ -512,7 +473,7 @@
 
     <section class="slide" data-title="다음 주">
       <div class="slide-inner">
-        <p class="eyebrow">Next week · S-D1 · 4주차</p>
+        <p class="eyebrow">Next week · 4주차</p>
         <h2>다음 주 할 일과 산출물</h2>
         <table>
           <thead>
@@ -552,7 +513,7 @@
     <section class="slide" data-title="이후·미결">
       <div class="slide-inner">
         <p class="eyebrow">Lookahead · Issues</p>
-        <h2>5주차 산출물과 이번 주에서 넘긴 미결</h2>
+        <h2>5주차 산출물과 아직 안 정한 것</h2>
         <div class="grid two">
           <div class="card">
             <h3>5주 말까지 나올 것</h3>
@@ -560,12 +521,12 @@
               <li>REST API 명세서</li>
               <li>검증 규칙 명세서 (R01–R12 임계)</li>
               <li>핵심 3화면 프로토타입</li>
-              <li>설계 리뷰 기록 · 미결 확정</li>
+              <li>설계 리뷰 기록 · 미정 항목 확정</li>
             </ul>
-            <p style="margin-top:10px;">5주 게이트: 스택, 표본·주기, 계획 대체, 푸시/지도 여부, 임계 기본값.</p>
+            <p style="margin-top:10px;">5주까지 정할 것: 기술 선택, 교차로 몇 개·얼마나 자주, 계획 데이터 대체, 실시간 푸시·지도, 오류 판정 숫자.</p>
           </div>
           <div class="card">
-            <h3>열린 이슈 (설계 입력)</h3>
+            <h3>아직 안 정한 것</h3>
             <ul>
               <li>React/Vue, Spring/Node</li>
               <li>인천 표본 수·수집 주기</li>
@@ -573,7 +534,7 @@
               <li>웹소켓·지도 1차 포함 여부</li>
               <li>규칙 임계 기본값, 통제 화면 위치</li>
             </ul>
-            <p class="owner" style="margin-top:10px;">UTIC 미승인은 결함 아님. 시드/수동 계획으로 진행.</p>
+            <p class="owner" style="margin-top:10px;">UTIC(신호 계획 데이터) 승인이 늦어도 결함이 아니다. 직접 넣은 계획으로 진행한다.</p>
           </div>
         </div>
       </div>

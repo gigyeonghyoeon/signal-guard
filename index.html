@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Signal Guard — 실시간 교통신호 상태정보 오류검지</title>
-  <meta name="description" content="인천시 교차로 신호 계획과 실시간 상태를 대조해 오류를 검지·관제·통제하는 웹 모니터링 시스템. 3주차 분석 리뷰." />
+  <title>Signal Guard — 3주차 주간 보고</title>
+  <meta name="description" content="Signal Guard 3주차 주간 보고. 분석 산출물 5종 작성 결과, 작성 방식, 다음 주 설계 계획." />
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   <style>
     :root {
@@ -285,6 +285,31 @@
     .cover-team { margin-top: 36px; color: var(--muted); font-size: 15px; line-height: 1.7; }
     .cover-team b { color: var(--text); }
 
+    .chain {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin: 4px 0 22px;
+    }
+
+    .chain b {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: 13px;
+      font-weight: 650;
+    }
+
+    .chain i {
+      color: var(--muted);
+      font-style: normal;
+      font-size: 12px;
+    }
+
+    .owner { color: var(--amber); font-size: 12px; font-weight: 500; }
+
     @media (max-width: 900px) {
       .slide { padding: 28px 20px 56px; }
       header, footer.bar { padding-left: 16px; padding-right: 16px; }
@@ -309,7 +334,7 @@
         </div>
       </a>
       <div class="meta">
-        <span>3주차 분석 리뷰</span>
+        <span>3주차 주간 보고</span>
         <span>조찬희 · 기경현</span>
       </div>
     </header>
@@ -327,173 +352,229 @@
   <template id="slides">
     <section class="slide" data-title="표지">
       <div class="slide-inner">
-        <p class="eyebrow">Week 3 · Analysis Review</p>
-        <h1>Signal Guard</h1>
-        <p class="lead">교차로 신호 계획과 실시간 상태를 대조해<br />오류를 검지하고, 관제하고, 닫는다.</p>
+        <p class="eyebrow">Week 3 · Weekly Report</p>
+        <h1>3주차 주간 보고</h1>
+        <p class="lead">분석 단계(S0)를 닫고, 산출물 5종을 고정했다.<br />다음 주는 설계다.</p>
         <div class="chips">
-          <span class="chip ok">실시간 API 승인 완료</span>
-          <span class="chip wait">UTIC 계획 승인 대기</span>
-          <span class="chip ok">분석 산출물 고정</span>
+          <span class="chip ok">M1 분석 완료</span>
+          <span class="chip ok">산출물 5종</span>
+          <span class="chip wait">설계 미결 7건 → 4–5주</span>
         </div>
         <p class="cover-team">
-          <b>조찬희</b> 기획 · 프론트엔드 · PM<br />
-          <b>기경현</b> 백엔드 · 데이터<br />
-          근거: 한국도로교통공단 제안요청서 (2025.08) · 수업 범위: 인천시
+          Signal Guard · 실시간 교통신호 상태정보 오류검지<br />
+          <b>조찬희</b> 기획·PM · <b>기경현</b> 백엔드·데이터<br />
+          기간 1–3주 · 보고일 2026.09.13
         </p>
       </div>
     </section>
 
-    <section class="slide" data-title="문제">
+    <section class="slide" data-title="요약">
       <div class="slide-inner">
-        <p class="eyebrow">Why</p>
-        <h2>운전자에게 나가는 신호가 현장과 어긋난다</h2>
-        <div class="grid three">
-          <div class="card">
-            <p class="stat">2,425<small>연계 교차로 · 18개 지자체</small></p>
-          </div>
-          <div class="card">
-            <p class="stat">727<small>수업 검증 대상 · 인천시</small></p>
-          </div>
-          <div class="card">
-            <p class="stat">잔여시간<small>갑자기 바뀌면 민원으로 이어짐</small></p>
-          </div>
-        </div>
-        <div class="card" style="margin-top:14px;">
-          <h3>현장 문제</h3>
-          <p>통신 지연·신호기 오류로 진행 방향 점등 상태와 잔여시간이 실제와 불일치한다. 기존 체계는 현장 제어기에서 센터·Open API로 흘러가지만, 그 데이터가 맞는지 검지·관제·통제하는 계층이 없다.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="slide" data-title="해법">
-      <div class="slide-inner">
-        <p class="eyebrow">How</p>
-        <h2>수집 → 검지 → 관제 → 통제</h2>
-        <div class="flow">
-          <div class="flow-step"><b>수집</b><span>계획(기대값)과 실시간 상태(실측값)를 같은 교차로·시각·방향에 붙인다.</span></div>
-          <div class="flow-step"><b>검지</b><span>누락·급변·순서 위반·계획 불일치를 규칙 엔진이 가른다.</span></div>
-          <div class="flow-step"><b>관제</b><span>대시보드에서 등급·이슈·지연을 보고 담당을 붙인다.</span></div>
-          <div class="flow-step"><b>통제</b><span>정보·계획을 고치거나 현장 요청을 남긴다. 원본은 남긴다.</span></div>
-        </div>
-        <p class="note">자동보정은 <strong>제공 계층만</strong> 고친다. 현장 신호기를 원격으로 켜고 끄지 않는다.</p>
-      </div>
-    </section>
-
-    <section class="slide" data-title="범위">
-      <div class="slide-inner">
-        <p class="eyebrow">Scope</p>
-        <h2>인천 웹 MVP / 신호기 실제어는 제외</h2>
-        <div class="grid two">
-          <div class="card">
-            <h3>한다</h3>
-            <ul>
-              <li>인천 표본 교차로 수집·저장</li>
-              <li>계획 대비 상태 검증, 오류 등급</li>
-              <li>대시보드 · 이슈 · 통계 · 권한</li>
-              <li>정보 통제, 계획 통제, 현장 통제 요청</li>
-            </ul>
-          </div>
-          <div class="card">
-            <h3>하지 않는다</h3>
-            <ul>
-              <li>전국 2,425개소 동시 연계</li>
-              <li>신호제어기 원격 점등·주기 변경</li>
-              <li>센터 내부망·하드웨어 납품</li>
-              <li>고급 ML 이상탐지, 지도 관제 1차는 선택</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="slide" data-title="데이터">
-      <div class="slide-inner">
-        <p class="eyebrow">Data</p>
-        <h2>대조의 두 축</h2>
+        <p class="eyebrow">This week</p>
+        <h2>목표 대비 실적</h2>
         <table>
           <thead>
             <tr>
-              <th>축</th>
-              <th>출처</th>
-              <th>내용</th>
-              <th>지금</th>
+              <th>항목</th>
+              <th>계획</th>
+              <th>실적</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>상태 · 실측</td>
-              <td>공공데이터포털 실시간 API</td>
-              <td>교차로 맵, 8방향 잔여시간·점등</td>
-              <td>승인 · 동작 확인</td>
+              <td>단계 목표</td>
+              <td>분석 산출물 고정 (M1)</td>
+              <td>완료. 범위·요구·백로그가 저장소에 있음</td>
             </tr>
             <tr>
-              <td>계획 · 기대</td>
-              <td>UTIC 신호 개방 데이터</td>
-              <td>TOD · SIGNALMAP</td>
-              <td>승인 대기</td>
+              <td>산출</td>
+              <td>정의서 4종 + 백로그/WBS</td>
+              <td>5종 작성·교차 검수</td>
+            </tr>
+            <tr>
+              <td>일정</td>
+              <td>1–3주 분석</td>
+              <td>3주 말 게이트 통과</td>
+            </tr>
+            <tr>
+              <td>미완</td>
+              <td>설계 입력(스택·표본 수 등)</td>
+              <td>미결 7건으로 넘김. 이번 주 범위 밖</td>
             </tr>
           </tbody>
         </table>
-        <p class="note" style="margin-top:22px;">승인 전에는 운영자 입력·주기 추정·시드로 계획을 대체한다. 실시간 API는 일 5,000건이라 표본 배치 수집으로 쿼터를 지킨다.</p>
       </div>
     </section>
 
-    <section class="slide" data-title="화면">
+    <section class="slide" data-title="산출물">
       <div class="slide-inner">
-        <p class="eyebrow">Product</p>
-        <h2>운영자가 보는 여섯 화면</h2>
-        <div class="grid three">
-          <div class="card"><h3>1. 종합 대시보드</h3><p>정상·경고·오류 수, 지연, 미처리 이슈, 시간대 추이</p></div>
-          <div class="card"><h3>2. 교차로 상세</h3><p>8방향 점등·잔여시간, 계획 대비, 검증 타임라인</p></div>
-          <div class="card"><h3>3. 오류·이슈</h3><p>등급·유형 필터, 담당, 조치, 종료</p></div>
-          <div class="card"><h3>4. 신호 계획</h3><p>TOD·현시 조회, 미매핑 교차로 수동 등록</p></div>
-          <div class="card"><h3>5. 통계·리포트</h3><p>오류율, 다발 교차로, 자동보정 vs 수동조치</p></div>
-          <div class="card"><h3>6. 설정</h3><p>계정, 수집 주기, 규칙 임계값, 쿼터 사용량</p></div>
+        <p class="eyebrow">Deliverables</p>
+        <h2>이번에 작성한 것</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>산출물</th>
+              <th>역할</th>
+              <th>규모</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>프로젝트정의서</td>
+              <td>왜 만드는가, 범위, 데이터</td>
+              <td>수업 MVP · 인천</td>
+            </tr>
+            <tr>
+              <td>제안요청서 요구사항 대응표</td>
+              <td>RFP 한 줄이 어디에 붙는지</td>
+              <td>39건 · 구현 7 / 부분 17 / 문서 15</td>
+            </tr>
+            <tr>
+              <td>요구사항정의서</td>
+              <td>무엇을, 통과/실패로</td>
+              <td>FR·NFR ID · 수용 기준</td>
+            </tr>
+            <tr>
+              <td>유스케이스·사용자 스토리</td>
+              <td>누가, 어떤 흐름으로</td>
+              <td>UC 11 · US 33 (필수 29)</td>
+            </tr>
+            <tr>
+              <td>제품 백로그 · WBS</td>
+              <td>언제, 누가, 몇 주</td>
+              <td>15주 · Must 96 SP</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="note" style="margin-top:18px;">주 책임 <strong>조찬희</strong>, 데이터·RFP 교차 <strong>기경현</strong>. md 정본 + 제출용 docx/xlsx.</p>
+      </div>
+    </section>
+
+    <section class="slide" data-title="작성 방식">
+      <div class="slide-inner">
+        <p class="eyebrow">How we wrote</p>
+        <h2>앞에서 뒤로만 내려가게 썼다</h2>
+        <div class="chain">
+          <b>RFP</b><i>→</i>
+          <b>정의서</b><i>왜·범위</i>
+          <b>대응표</b><i>39건</i>
+          <b>요구사항</b><i>무엇을</i>
+          <b>UC / US</b><i>누가</i>
+          <b>백로그</b><i>언제</i>
         </div>
-      </div>
-    </section>
-
-    <section class="slide" data-title="이번 주">
-      <div class="slide-inner">
-        <p class="eyebrow">This week · S0</p>
-        <h2>분석이 끝났다. 범위가 고정됐다.</h2>
         <div class="grid two">
           <div class="card">
-            <h3>끝난 산출물</h3>
-            <ol>
-              <li>프로젝트정의서</li>
-              <li>제안요청서 요구사항 대응표 39건</li>
-              <li>요구사항정의서</li>
-              <li>유스케이스 · 사용자 스토리 33건</li>
-              <li>제품 백로그 · 15주 WBS</li>
-            </ol>
+            <h3>작성 원칙</h3>
+            <ul>
+              <li>한 ID에 검증 가능한 요구 하나</li>
+              <li>모든 요구에 수용 기준</li>
+              <li>RFP ID 또는 EXT와 추적</li>
+              <li>원본 수신은 덮지 않는다고 반복</li>
+            </ul>
           </div>
           <div class="card">
-            <h3>15주 중 지금</h3>
-            <p>1–3주 분석 완료 → 4–5주 설계 → 6–11주 구현 → 12–13주 시험 → 14–15주 시연</p>
-            <p style="margin-top:12px;">필수 스토리 29건 · 구현 6주 용량에 맞춤. 기능 동결은 11주 말.</p>
+            <h3>수업으로 자른 방식</h3>
+            <ul>
+              <li>전국·센터망 → 인천 표본·공개 API</li>
+              <li>신호기 실제어는 제외, 현장은 요청만</li>
+              <li>발주 행정 15건은 문서·수업 대체</li>
+              <li>UTIC 미승인은 시드·수동 계획으로 대체</li>
+            </ul>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="slide" data-title="다음">
+    <section class="slide" data-title="문서별">
       <div class="slide-inner">
-        <p class="eyebrow">Next</p>
-        <h2>다음 주는 설계다</h2>
+        <p class="eyebrow">Per document</p>
+        <h2>각 산출물을 이렇게 채웠다</h2>
         <div class="grid two">
           <div class="card">
-            <h3>4주차</h3>
-            <p>스택 확정, 화면 IA·와이어, ERD 초안, 표본 교차로 수와 수집 주기</p>
+            <h3>프로젝트정의서</h3>
+            <p>RFP 배경을 수업 범위로 줄였다. 수집→검지→관제→통제, 원본 불변, 실시간 API 명세와 UTIC 대체 경로를 적었다.</p>
           </div>
           <div class="card">
-            <h3>5주차</h3>
-            <p>API·검증 규칙 명세, 클릭 가능한 프로토타입, 미결 7건 확정</p>
+            <h3>RFP 대응표</h3>
+            <p>39건을 빠짐없이 구현 / 부분 구현 / 문서 대체로 나눴다. 소프트웨어 대상은 24건이다.</p>
+          </div>
+          <div class="card">
+            <h3>요구사항정의서</h3>
+            <p>정의서·RFP를 FR/NFR ID로 분해했다. v1.1에서 통제를 정보·계획·현장 요청으로 나눴다.</p>
+          </div>
+          <div class="card">
+            <h3>UC / US · 백로그</h3>
+            <p>UC 11을 상세 흐름으로 전개하고 US 33으로 쪼갰다. 필수 29건(96 SP)을 주당 16에 맞춰 스프린트에 넣었다.</p>
           </div>
         </div>
-        <div class="card" style="margin-top:14px;">
-          <h3>지금 알아둘 제약</h3>
-          <p>UTIC가 늦으면 수동 계획으로 대조한다. 쿼터 5,000건을 넘기지 않는다. 신호기 실제어는 요구가 아니다. 원본 수신은 어떤 경로로도 덮지 않는다.</p>
+      </div>
+    </section>
+
+    <section class="slide" data-title="다음 주">
+      <div class="slide-inner">
+        <p class="eyebrow">Next week · S-D1 · 4주차</p>
+        <h2>다음 주 할 일과 산출물</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>할 일</th>
+              <th>산출물</th>
+              <th>담당</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>프론트·백엔드 스택 확정, 논리 구성도</td>
+              <td>아키텍처 1장</td>
+              <td>공동</td>
+            </tr>
+            <tr>
+              <td>표본 교차로 수 × 수집 주기 × 보관</td>
+              <td>용량 산정</td>
+              <td>기경현</td>
+            </tr>
+            <tr>
+              <td>필수 6화면 IA · 와이어</td>
+              <td>화면설계</td>
+              <td>조찬희</td>
+            </tr>
+            <tr>
+              <td>원본/제공 분리한 개념·논리 ERD</td>
+              <td>ERD 초안</td>
+              <td>기경현</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="note" style="margin-top:18px;">화면은 대시보드, 교차로 상세, 오류·이슈, 신호 계획, 통계, 설정. 아직 클릭 프로토타입은 5주차 산출이다.</p>
+      </div>
+    </section>
+
+    <section class="slide" data-title="이후·미결">
+      <div class="slide-inner">
+        <p class="eyebrow">Lookahead · Issues</p>
+        <h2>5주차 산출물과 이번 주에서 넘긴 미결</h2>
+        <div class="grid two">
+          <div class="card">
+            <h3>5주 말까지 나올 것</h3>
+            <ul>
+              <li>REST API 명세서</li>
+              <li>검증 규칙 명세서 (R01–R12 임계)</li>
+              <li>핵심 3화면 프로토타입</li>
+              <li>설계 리뷰 기록 · 미결 확정</li>
+            </ul>
+            <p style="margin-top:10px;">5주 게이트: 스택, 표본·주기, 계획 대체, 푸시/지도 여부, 임계 기본값.</p>
+          </div>
+          <div class="card">
+            <h3>열린 이슈 (설계 입력)</h3>
+            <ul>
+              <li>React/Vue, Spring/Node</li>
+              <li>인천 표본 수·수집 주기</li>
+              <li>UTIC 승인 · ID 매핑 · 승인 전 대체</li>
+              <li>웹소켓·지도 1차 포함 여부</li>
+              <li>규칙 임계 기본값, 통제 화면 위치</li>
+            </ul>
+            <p class="owner" style="margin-top:10px;">UTIC 미승인은 결함 아님. 시드/수동 계획으로 진행.</p>
+          </div>
         </div>
       </div>
     </section>

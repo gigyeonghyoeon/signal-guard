@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Signal Guard — 실시간 교통신호 상태정보 오류검지</title>
+  <meta name="description" content="인천시 교차로 신호 계획과 실시간 상태를 대조해 오류를 검지·관제·통제하는 웹 모니터링 시스템. 3주차 분석 리뷰." />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <style>
+    :root {
+      --bg: #070b14;
+      --panel: #10182a;
+      --line: #243044;
+      --text: #eef3fb;
+      --muted: #8b9bb4;
+      --red: #ef4444;
+      --amber: #f59e0b;
+      --green: #22c55e;
+      --blue: #5b8def;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Malgun Gothic", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+    }
+
+    body { overflow: hidden; }
+
+    .stage {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 28px;
+      border-bottom: 1px solid var(--line);
+      flex-shrink: 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .lamps {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      padding: 4px 6px;
+      background: #05080f;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+    }
+
+    .lamp {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .lamp.red { background: var(--red); }
+    .lamp.amber { background: var(--amber); }
+    .lamp.green { background: var(--green); }
+
+    .brand strong { font-size: 15px; letter-spacing: 0.04em; }
+    .brand span { display: block; font-size: 11px; color: var(--muted); font-weight: 400; }
+
+    .meta {
+      font-size: 12px;
+      color: var(--muted);
+      display: flex;
+      gap: 16px;
+    }
+
+    main {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      padding: 48px 64px 72px;
+      display: none;
+      align-items: center;
+    }
+
+    .slide.active { display: flex; }
+
+    .slide-inner { width: min(1080px, 100%); }
+
+    kbd {
+      font-family: inherit;
+      font-size: 11px;
+      border: 1px solid var(--line);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--muted);
+    }
+
+    h1 {
+      font-size: clamp(32px, 5vw, 56px);
+      line-height: 1.15;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+
+    h2 {
+      font-size: clamp(26px, 3.4vw, 40px);
+      line-height: 1.25;
+      letter-spacing: -0.03em;
+      margin-bottom: 28px;
+    }
+
+    .eyebrow {
+      color: var(--amber);
+      font-size: 13px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .lead {
+      margin-top: 20px;
+      font-size: 22px;
+      color: var(--muted);
+      line-height: 1.5;
+      max-width: 42em;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 28px;
+    }
+
+    .chip {
+      font-size: 13px;
+      padding: 6px 10px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: var(--muted);
+    }
+
+    .chip.ok { border-color: #1d4a32; color: #86efac; }
+    .chip.wait { border-color: #5b3d12; color: #fcd34d; }
+
+    .grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .grid.two { grid-template-columns: 1fr 1fr; }
+    .grid.three { grid-template-columns: 1fr 1fr 1fr; }
+    .grid.four { grid-template-columns: repeat(4, 1fr); }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 18px 18px 16px;
+    }
+
+    .card h3 {
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+
+    .card p, .card li {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .card ol, .card ul { padding-left: 18px; }
+
+    .stat {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+    }
+
+    .stat small {
+      display: block;
+      margin-top: 4px;
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--muted);
+      letter-spacing: 0;
+    }
+
+    .flow {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin: 8px 0 22px;
+    }
+
+    .flow-step {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 18px;
+      position: relative;
+    }
+
+    .flow-step b { display: block; font-size: 18px; margin-bottom: 6px; }
+    .flow-step span { color: var(--muted); font-size: 13px; line-height: 1.45; }
+
+    .note {
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .note strong { color: var(--text); }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 15px;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 12px 10px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+
+    th { color: var(--muted); font-weight: 500; font-size: 13px; }
+
+    footer.bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 28px 14px;
+      border-top: 1px solid var(--line);
+      flex-shrink: 0;
+    }
+
+    .progress {
+      flex: 1;
+      height: 3px;
+      background: #1b2436;
+      margin: 0 20px;
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .progress > i {
+      display: block;
+      height: 100%;
+      width: 0;
+      background: var(--amber);
+    }
+
+    .nav-btn {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px 14px;
+      cursor: pointer;
+      font: inherit;
+      font-size: 13px;
+    }
+
+    .nav-btn:hover { border-color: #3b4d6b; }
+
+    .hint { font-size: 12px; color: var(--muted); min-width: 140px; }
+
+    .cover-team { margin-top: 36px; color: var(--muted); font-size: 15px; line-height: 1.7; }
+    .cover-team b { color: var(--text); }
+
+    @media (max-width: 900px) {
+      .slide { padding: 28px 20px 56px; }
+      header, footer.bar { padding-left: 16px; padding-right: 16px; }
+      .grid.two, .grid.three, .grid.four, .flow { grid-template-columns: 1fr; }
+      .meta { display: none; }
+      .lead { font-size: 18px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <header>
+      <a class="brand" href="#1">
+        <div class="lamps" aria-hidden="true">
+          <i class="lamp red"></i>
+          <i class="lamp amber"></i>
+          <i class="lamp green"></i>
+        </div>
+        <div>
+          <strong>Signal Guard</strong>
+          <span>실시간 교통신호 상태정보 오류검지</span>
+        </div>
+      </a>
+      <div class="meta">
+        <span>3주차 분석 리뷰</span>
+        <span>조찬희 · 기경현</span>
+      </div>
+    </header>
+
+    <main id="deck"></main>
+
+    <footer class="bar">
+      <button class="nav-btn" id="prev" type="button">이전</button>
+      <div class="progress"><i id="bar"></i></div>
+      <div class="hint"><span id="pos">1</span> / <span id="total">8</span> · 방향키</div>
+      <button class="nav-btn" id="next" type="button">다음</button>
+    </footer>
+  </div>
+
+  <template id="slides">
+    <section class="slide" data-title="표지">
+      <div class="slide-inner">
+        <p class="eyebrow">Week 3 · Analysis Review</p>
+        <h1>Signal Guard</h1>
+        <p class="lead">교차로 신호 계획과 실시간 상태를 대조해<br />오류를 검지하고, 관제하고, 닫는다.</p>
+        <div class="chips">
+          <span class="chip ok">실시간 API 승인 완료</span>
+          <span class="chip wait">UTIC 계획 승인 대기</span>
+          <span class="chip ok">분석 산출물 고정</span>
+        </div>
+        <p class="cover-team">
+          <b>조찬희</b> 기획 · 프론트엔드 · PM<br />
+          <b>기경현</b> 백엔드 · 데이터<br />
+          근거: 한국도로교통공단 제안요청서 (2025.08) · 수업 범위: 인천시
+        </p>
+      </div>
+    </section>
+
+    <section class="slide" data-title="문제">
+      <div class="slide-inner">
+        <p class="eyebrow">Why</p>
+        <h2>운전자에게 나가는 신호가 현장과 어긋난다</h2>
+        <div class="grid three">
+          <div class="card">
+            <p class="stat">2,425<small>연계 교차로 · 18개 지자체</small></p>
+          </div>
+          <div class="card">
+            <p class="stat">727<small>수업 검증 대상 · 인천시</small></p>
+          </div>
+          <div class="card">
+            <p class="stat">잔여시간<small>갑자기 바뀌면 민원으로 이어짐</small></p>
+          </div>
+        </div>
+        <div class="card" style="margin-top:14px;">
+          <h3>현장 문제</h3>
+          <p>통신 지연·신호기 오류로 진행 방향 점등 상태와 잔여시간이 실제와 불일치한다. 기존 체계는 현장 제어기에서 센터·Open API로 흘러가지만, 그 데이터가 맞는지 검지·관제·통제하는 계층이 없다.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="해법">
+      <div class="slide-inner">
+        <p class="eyebrow">How</p>
+        <h2>수집 → 검지 → 관제 → 통제</h2>
+        <div class="flow">
+          <div class="flow-step"><b>수집</b><span>계획(기대값)과 실시간 상태(실측값)를 같은 교차로·시각·방향에 붙인다.</span></div>
+          <div class="flow-step"><b>검지</b><span>누락·급변·순서 위반·계획 불일치를 규칙 엔진이 가른다.</span></div>
+          <div class="flow-step"><b>관제</b><span>대시보드에서 등급·이슈·지연을 보고 담당을 붙인다.</span></div>
+          <div class="flow-step"><b>통제</b><span>정보·계획을 고치거나 현장 요청을 남긴다. 원본은 남긴다.</span></div>
+        </div>
+        <p class="note">자동보정은 <strong>제공 계층만</strong> 고친다. 현장 신호기를 원격으로 켜고 끄지 않는다.</p>
+      </div>
+    </section>
+
+    <section class="slide" data-title="범위">
+      <div class="slide-inner">
+        <p class="eyebrow">Scope</p>
+        <h2>인천 웹 MVP / 신호기 실제어는 제외</h2>
+        <div class="grid two">
+          <div class="card">
+            <h3>한다</h3>
+            <ul>
+              <li>인천 표본 교차로 수집·저장</li>
+              <li>계획 대비 상태 검증, 오류 등급</li>
+              <li>대시보드 · 이슈 · 통계 · 권한</li>
+              <li>정보 통제, 계획 통제, 현장 통제 요청</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>하지 않는다</h3>
+            <ul>
+              <li>전국 2,425개소 동시 연계</li>
+              <li>신호제어기 원격 점등·주기 변경</li>
+              <li>센터 내부망·하드웨어 납품</li>
+              <li>고급 ML 이상탐지, 지도 관제 1차는 선택</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="데이터">
+      <div class="slide-inner">
+        <p class="eyebrow">Data</p>
+        <h2>대조의 두 축</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>축</th>
+              <th>출처</th>
+              <th>내용</th>
+              <th>지금</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>상태 · 실측</td>
+              <td>공공데이터포털 실시간 API</td>
+              <td>교차로 맵, 8방향 잔여시간·점등</td>
+              <td>승인 · 동작 확인</td>
+            </tr>
+            <tr>
+              <td>계획 · 기대</td>
+              <td>UTIC 신호 개방 데이터</td>
+              <td>TOD · SIGNALMAP</td>
+              <td>승인 대기</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="note" style="margin-top:22px;">승인 전에는 운영자 입력·주기 추정·시드로 계획을 대체한다. 실시간 API는 일 5,000건이라 표본 배치 수집으로 쿼터를 지킨다.</p>
+      </div>
+    </section>
+
+    <section class="slide" data-title="화면">
+      <div class="slide-inner">
+        <p class="eyebrow">Product</p>
+        <h2>운영자가 보는 여섯 화면</h2>
+        <div class="grid three">
+          <div class="card"><h3>1. 종합 대시보드</h3><p>정상·경고·오류 수, 지연, 미처리 이슈, 시간대 추이</p></div>
+          <div class="card"><h3>2. 교차로 상세</h3><p>8방향 점등·잔여시간, 계획 대비, 검증 타임라인</p></div>
+          <div class="card"><h3>3. 오류·이슈</h3><p>등급·유형 필터, 담당, 조치, 종료</p></div>
+          <div class="card"><h3>4. 신호 계획</h3><p>TOD·현시 조회, 미매핑 교차로 수동 등록</p></div>
+          <div class="card"><h3>5. 통계·리포트</h3><p>오류율, 다발 교차로, 자동보정 vs 수동조치</p></div>
+          <div class="card"><h3>6. 설정</h3><p>계정, 수집 주기, 규칙 임계값, 쿼터 사용량</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="이번 주">
+      <div class="slide-inner">
+        <p class="eyebrow">This week · S0</p>
+        <h2>분석이 끝났다. 범위가 고정됐다.</h2>
+        <div class="grid two">
+          <div class="card">
+            <h3>끝난 산출물</h3>
+            <ol>
+              <li>프로젝트정의서</li>
+              <li>제안요청서 요구사항 대응표 39건</li>
+              <li>요구사항정의서</li>
+              <li>유스케이스 · 사용자 스토리 33건</li>
+              <li>제품 백로그 · 15주 WBS</li>
+            </ol>
+          </div>
+          <div class="card">
+            <h3>15주 중 지금</h3>
+            <p>1–3주 분석 완료 → 4–5주 설계 → 6–11주 구현 → 12–13주 시험 → 14–15주 시연</p>
+            <p style="margin-top:12px;">필수 스토리 29건 · 구현 6주 용량에 맞춤. 기능 동결은 11주 말.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="다음">
+      <div class="slide-inner">
+        <p class="eyebrow">Next</p>
+        <h2>다음 주는 설계다</h2>
+        <div class="grid two">
+          <div class="card">
+            <h3>4주차</h3>
+            <p>스택 확정, 화면 IA·와이어, ERD 초안, 표본 교차로 수와 수집 주기</p>
+          </div>
+          <div class="card">
+            <h3>5주차</h3>
+            <p>API·검증 규칙 명세, 클릭 가능한 프로토타입, 미결 7건 확정</p>
+          </div>
+        </div>
+        <div class="card" style="margin-top:14px;">
+          <h3>지금 알아둘 제약</h3>
+          <p>UTIC가 늦으면 수동 계획으로 대조한다. 쿼터 5,000건을 넘기지 않는다. 신호기 실제어는 요구가 아니다. 원본 수신은 어떤 경로로도 덮지 않는다.</p>
+        </div>
+      </div>
+    </section>
+  </template>
+
+  <script>
+    const deck = document.getElementById("deck");
+    const tpl = document.getElementById("slides");
+    const slides = Array.from(tpl.content.querySelectorAll(".slide"));
+    slides.forEach((s) => deck.appendChild(s));
+
+    let i = 0;
+    const total = slides.length;
+    document.getElementById("total").textContent = String(total);
+
+    function go(n) {
+      i = Math.max(0, Math.min(total - 1, n));
+      slides.forEach((s, idx) => s.classList.toggle("active", idx === i));
+      document.getElementById("pos").textContent = String(i + 1);
+      document.getElementById("bar").style.width = ((i + 1) / total) * 100 + "%";
+      history.replaceState(null, "", "#" + (i + 1));
+    }
+
+    function fromHash() {
+      const n = parseInt(location.hash.replace("#", ""), 10);
+      go(Number.isFinite(n) ? n - 1 : 0);
+    }
+
+    document.getElementById("prev").onclick = () => go(i - 1);
+    document.getElementById("next").onclick = () => go(i + 1);
+
+    window.addEventListener("keydown", (e) => {
+      if (["ArrowRight", "ArrowDown", "PageDown", " "].includes(e.key)) {
+        e.preventDefault();
+        go(i + 1);
+      }
+      if (["ArrowLeft", "ArrowUp", "PageUp", "Backspace"].includes(e.key)) {
+        e.preventDefault();
+        go(i - 1);
+      }
+      if (e.key === "Home") go(0);
+      if (e.key === "End") go(total - 1);
+    });
+
+    let touchX = null;
+    window.addEventListener("touchstart", (e) => { touchX = e.changedTouches[0].clientX; });
+    window.addEventListener("touchend", (e) => {
+      if (touchX == null) return;
+      const dx = e.changedTouches[0].clientX - touchX;
+      if (dx < -40) go(i + 1);
+      if (dx > 40) go(i - 1);
+      touchX = null;
+    });
+
+    window.addEventListener("hashchange", fromHash);
+    fromHash();
+  </script>
+</body>
+</html>

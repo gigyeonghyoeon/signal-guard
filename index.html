@@ -95,11 +95,56 @@
       padding: 48px 64px 72px;
       display: none;
       align-items: center;
+      justify-content: center;
     }
 
     .slide.active { display: flex; }
 
-    .slide-inner { width: min(1080px, 100%); }
+    .slide-top { align-items: flex-start; }
+
+    .slide-inner { width: min(1080px, 100%); margin: 0 auto; }
+
+    .slide-inner > h1 { margin-bottom: 80px; }
+
+    .slide-cover.active {
+      display: flex;
+    }
+
+    .slide-cover .slide-inner {
+      display: flex;
+      flex-wrap: nowrap;
+      align-items: stretch;
+      gap: clamp(24px, 3.4vw, 48px);
+      width: fit-content;
+      max-width: 100%;
+    }
+
+    .cover-title { flex: 0 1 auto; min-width: 0; }
+
+    .cover-mark {
+      flex: 0 0 auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      border-left: 1px solid var(--line);
+      padding-left: clamp(22px, 3vw, 44px);
+      user-select: none;
+    }
+
+    .cover-mark .name {
+      font-size: clamp(40px, 6.4vw, 92px);
+      font-weight: 800;
+      line-height: 0.94;
+      letter-spacing: -0.05em;
+    }
+
+    .cover-mark .sub {
+      margin-top: 20px;
+      font-size: clamp(13px, 1.5vw, 18px);
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      line-height: 1.5;
+    }
 
     kbd {
       font-family: inherit;
@@ -317,6 +362,19 @@
       .meta { display: none; }
       .lead { font-size: 18px; }
     }
+
+    @media (max-width: 560px) {
+      .slide-cover .slide-inner {
+        flex-wrap: wrap;
+        row-gap: 24px;
+      }
+
+      .cover-mark {
+        border-left: none;
+        border-top: 1px solid var(--line);
+        padding: 20px 0 0;
+      }
+    }
   </style>
 </head>
 <body>
@@ -350,20 +408,24 @@
   </div>
 
   <template id="slides">
-    <section class="slide" data-title="표지">
+    <section class="slide slide-cover" data-title="표지">
       <div class="slide-inner">
-        <p class="eyebrow">Week 3 · Weekly Report</p>
-        <h1>3주차 주간 보고</h1>
-        <p class="lead">이번 주는 분석 문서를 다 썼다.<br />다음 주는 화면·구조 설계다.</p>
-        <div class="chips">
-          <span class="chip ok">분석 문서 5종 작성</span>
-          <span class="chip wait">다음 주에 정할 것 있음</span>
+        <div class="cover-title">
+          <p class="eyebrow">Week 3 · Weekly Report</p>
+          <h1>3주차 주간 보고</h1>
+          <p class="lead">이번 주는 분석 단계의 마무리 단계<br />다음 주는 화면·구조 설계 시작</p>
+          <div class="chips">
+            <span class="chip ok">분석 단계</span>
+          </div>
+          <p class="cover-team">
+            <b>조찬희</b> 기획·PM · <b>기경현</b> 백엔드·데이터<br />
+            기간 1–3주 · 보고일 2026.09.14
+          </p>
         </div>
-        <p class="cover-team">
-          Signal Guard · 실시간 교통신호 상태정보 오류검지<br />
-          <b>조찬희</b> 기획·PM · <b>기경현</b> 백엔드·데이터<br />
-          기간 1–3주 · 보고일 2026.09.13
-        </p>
+        <div class="cover-mark">
+          <div class="name">Signal<br />Guard</div>
+          <p class="sub">실시간 교통신호 상태정보<br />오류검지 시스템</p>
+        </div>
       </div>
     </section>
 
@@ -382,13 +444,13 @@
           <tbody>
             <tr>
               <td>프로젝트정의서</td>
-              <td>왜 만드는가, 범위, 데이터</td>
-              <td>수업 MVP · 인천</td>
+              <td>왜 만드는가, 범위, 데이터에 대한 정의</td>
+              <td>수업 MVP</td>
             </tr>
             <tr>
               <td>제안요청서 요구사항 대응표</td>
               <td>공단 요청 39건을 수업에서 어디에 붙일지</td>
-              <td>구현 7 / 부분 17 / 문서만 15</td>
+              <td>구현 7 / 부분 17 </td>
             </tr>
             <tr>
               <td>요구사항정의서</td>
@@ -397,49 +459,38 @@
             </tr>
             <tr>
               <td>유스케이스·사용자 스토리</td>
-              <td>누가, 어떤 흐름으로</td>
+              <td>누가, 어떤 흐름으로 사용할지</td>
               <td>흐름 11개 · 구현 단위 33개</td>
             </tr>
             <tr>
               <td>제품 백로그 · WBS</td>
-              <td>언제, 누가, 몇 주</td>
+              <td>언제, 누가, 몇 주에 할 작업 내용</td>
               <td>15주 작업 목록</td>
             </tr>
           </tbody>
         </table>
-        <p class="note" style="margin-top:18px;">주 책임 <strong>조찬희</strong>, 데이터·제안요청서 교차 <strong>기경현</strong>. 원문은 md, 제출본은 docx/xlsx.</p>
       </div>
     </section>
 
-    <section class="slide" data-title="작성 방식">
+    <section class="slide slide-top" data-title="작성 방식">
       <div class="slide-inner">
         <p class="eyebrow">How we wrote</p>
-        <h2>앞에서 뒤로만 내려가게 썼다</h2>
-        <div class="chain">
-          <b>제안요청서</b><i>→</i>
-          <b>정의서</b><i>왜·범위</i>
-          <b>대응표</b><i>39건</i>
-          <b>요구사항</b><i>무엇을</i>
-          <b>유스케이스</b><i>누가</i>
-          <b>백로그</b><i>언제</i>
-        </div>
+        <h1>작성 방법</h1>
         <div class="grid two">
           <div class="card">
             <h3>작성 원칙</h3>
             <ul>
-              <li>한 ID에 검증 가능한 요구 하나</li>
-              <li>모든 요구에 수용 기준</li>
-              <li>제안요청서 번호와 우리 요구를 연결</li>
-              <li>원본 수신은 덮지 않는다고 반복</li>
+              <li>요구사항 별로 ID를 부여, 정의</li>
+              <li>요구사항에 통과 기준 정의</li>
+              <li>제안요청서의 내용을 토대로 요구사항을 연결</li>
             </ul>
           </div>
           <div class="card">
-            <h3>수업으로 자른 방식</h3>
+            <h3>구현을 위한 범위 정의</h3>
             <ul>
-              <li>전국·센터망 → 인천 표본·공개 API</li>
+              <li>신호 데이터는 인천시 데이터로 제한</li>
               <li>신호기 실제어는 제외, 현장은 요청만</li>
-              <li>발주 행정 15건은 문서·수업 대체</li>
-              <li>UTIC 미승인은 시드·수동 계획으로 대체</li>
+              <li>발주 행정 15건은 산출물로 대체</li>
             </ul>
           </div>
         </div>
@@ -453,11 +504,11 @@
         <div class="grid two">
           <div class="card">
             <h3>프로젝트정의서</h3>
-            <p>공단 제안요청서를 수업 범위로 줄였다. 수집→검지→관제→통제, 원본은 안 덮음, 실시간 API와 계획 데이터 대체 경로를 적었다.</p>
+            <p>공단 제안요청서를 수업 범위로 줄였다. 신호 데이터 수집→검지→관제→통제, 실시간 API와 계획 데이터의 대조를 통한 오류 감지</p>
           </div>
           <div class="card">
             <h3>제안요청서 대응표</h3>
-            <p>요청 39건을 빠짐없이 구현 / 부분 구현 / 문서만으로 나눴다. 프로그램으로 다루는 것은 24건이다.</p>
+            <p>요청 39건중 구현부분과 구현 불가능한 부분을 분리 구현하는 부분은 24건</p>
           </div>
           <div class="card">
             <h3>요구사항정의서</h3>
@@ -465,7 +516,7 @@
           </div>
           <div class="card">
             <h3>유스케이스 · 백로그</h3>
-            <p>흐름 11개, 구현 단위 33개로 나눴다. 필수 29개를 15주 일정에 넣었다.</p>
+            <p>흐름 11개, 구현 단위 33개로 나눴다. 백로그를 15주 일정에 따라 분배</p>
           </div>
         </div>
       </div>
@@ -474,67 +525,56 @@
     <section class="slide" data-title="다음 주">
       <div class="slide-inner">
         <p class="eyebrow">Next week · 4주차</p>
-        <h2>다음 주 할 일과 산출물</h2>
+        <h2>다음주 할일</h2>
         <table>
           <thead>
             <tr>
               <th>할 일</th>
-              <th>산출물</th>
               <th>담당</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td>프론트·백엔드 스택 확정, 논리 구성도</td>
-              <td>아키텍처 1장</td>
               <td>공동</td>
             </tr>
             <tr>
               <td>표본 교차로 수 × 수집 주기 × 보관</td>
-              <td>용량 산정</td>
               <td>기경현</td>
             </tr>
             <tr>
               <td>필수 6화면 IA · 와이어</td>
-              <td>화면설계</td>
               <td>조찬희</td>
             </tr>
             <tr>
               <td>원본/제공 분리한 개념·논리 ERD</td>
-              <td>ERD 초안</td>
               <td>기경현</td>
             </tr>
           </tbody>
         </table>
-        <p class="note" style="margin-top:18px;">화면은 대시보드, 교차로 상세, 오류·이슈, 신호 계획, 통계, 설정. 아직 클릭 프로토타입은 5주차 산출이다.</p>
       </div>
     </section>
 
-    <section class="slide" data-title="이후·미결">
+    <section class="slide" data-title="5주차">
       <div class="slide-inner">
-        <p class="eyebrow">Lookahead · Issues</p>
-        <h2>5주차 산출물과 아직 안 정한 것</h2>
+        <p class="eyebrow">After next week · 5주차</p>
+        <h2>설계 단계에서 나올 산출물</h2>
         <div class="grid two">
           <div class="card">
-            <h3>5주 말까지 나올 것</h3>
-            <ul>
-              <li>REST API 명세서</li>
-              <li>검증 규칙 명세서 (R01–R12 임계)</li>
-              <li>핵심 3화면 프로토타입</li>
-              <li>설계 리뷰 기록 · 미정 항목 확정</li>
-            </ul>
-            <p style="margin-top:10px;">5주까지 정할 것: 기술 선택, 교차로 몇 개·얼마나 자주, 계획 데이터 대체, 실시간 푸시·지도, 오류 판정 숫자.</p>
+            <h3>API 명세서</h3>
+            <p>화면이 서버에 무엇을 요청하는지 적어 둔다.</p>
           </div>
           <div class="card">
-            <h3>아직 안 정한 것</h3>
-            <ul>
-              <li>React/Vue, Spring/Node</li>
-              <li>인천 표본 수·수집 주기</li>
-              <li>UTIC 승인 · ID 매핑 · 승인 전 대체</li>
-              <li>웹소켓·지도 1차 포함 여부</li>
-              <li>규칙 임계 기본값, 통제 화면 위치</li>
-            </ul>
-            <p class="owner" style="margin-top:10px;">UTIC(신호 계획 데이터) 승인이 늦어도 결함이 아니다. 직접 넣은 계획으로 진행한다.</p>
+            <h3>검증 규칙 명세서</h3>
+            <p>어떤 신호를 오류로 볼지 규칙을 적는다.</p>
+          </div>
+          <div class="card">
+            <h3>화면 프로토타입</h3>
+            <p>대시보드·이슈·교차로 상세를 클릭해 보게 만든다.</p>
+          </div>
+          <div class="card">
+            <h3>설계 리뷰</h3>
+            <p>4–5주 설계를 한 번 점검하고 구현으로 넘어간다.</p>
           </div>
         </div>
       </div>

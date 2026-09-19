@@ -240,22 +240,20 @@
       </div>
     </section>
 
-    <section class="slide exhibit" data-title="API">
+    <section class="slide" data-title="API">
       <div class="slide-inner">
         <p class="eyebrow">Design · REST API</p>
         <h2>API 명세</h2>
-        <p class="note" style="margin-bottom:12px">브라우저는 공공 실시간 API나 UTIC를 직접 치지 않습니다. 외부 연동은 서버 워커 몫입니다.</p>
-        <div class="scroll">
-          <table>
-            <thead><tr><th>영역</th><th>예</th><th>권한</th></tr></thead>
-            <tbody>
-              <tr><td>인증·헬스</td><td>POST /auth/login, GET /health</td><td>로그인은 공개, 나머지는 인증</td></tr>
-              <tr><td>관제</td><td>GET /dashboard/summary, /intersections/{id}, /issues</td><td>운영자·관리자</td></tr>
-              <tr><td>통제</td><td>정보 통제·제공 차단·현장 요청·계획 PUT</td><td>관리자만. 운영자 403</td></tr>
-              <tr><td>설정</td><td>수집 대상, 규칙 임계값, 계정 CRUD, 쿼터</td><td>관리자만</td></tr>
-            </tbody>
-          </table>
-        </div>
+        <p class="note" style="margin-bottom:16px">브라우저는 공공 실시간 API나 UTIC를 직접 치지 않습니다. 외부 연동은 서버 워커 몫입니다.</p>
+        <table>
+          <thead><tr><th>영역</th><th>예</th><th>권한</th></tr></thead>
+          <tbody>
+            <tr><td>인증·헬스</td><td>POST /auth/login, GET /health</td><td>로그인은 공개, 나머지는 인증</td></tr>
+            <tr><td>관제</td><td>GET /dashboard/summary, /intersections/{id}, /issues</td><td>운영자·관리자</td></tr>
+            <tr><td>통제</td><td>정보 통제·제공 차단·현장 요청·계획 PUT</td><td>관리자만. 운영자 403</td></tr>
+            <tr><td>설정</td><td>수집 대상, 규칙 임계값, 계정 CRUD, 쿼터</td><td>관리자만</td></tr>
+          </tbody>
+        </table>
       </div>
     </section>
 

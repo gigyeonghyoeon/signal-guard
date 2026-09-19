@@ -423,7 +423,8 @@ body.doc-open {
   z-index: 2;
 }
 .doc-head { margin-bottom: 24px; }
-.doc-head h2 { margin-bottom: 8px; }
+.doc-head h2 { margin: 0 0 12px; }
+.doc-download { margin-top: 2px; }
 .doc-body.md { max-width: 900px; }
 .doc-body.md h1, .doc-body.md h2, .doc-body.md h3 {
   margin: 28px 0 12px;

@@ -123,16 +123,29 @@ SG.findDoc = function (id) {
   return SG_DOCS.find((d) => d.id === id);
 };
 
+SG.fileName = function (path) {
+  return path.split("/").pop();
+};
+
 SG.renderDocInto = async function (el, doc) {
   el.innerHTML = "";
   const head = document.createElement("div");
   head.className = "doc-head";
-  head.innerHTML =
-    "<div><p class='file-tag'>" +
-    doc.path +
-    "</p><h2>" +
-    doc.title +
-    "</h2></div>";
+  const titleWrap = document.createElement("div");
+  const tag = document.createElement("p");
+  tag.className = "file-tag";
+  tag.textContent = doc.path;
+  const h2 = document.createElement("h2");
+  h2.textContent = doc.title;
+  titleWrap.appendChild(tag);
+  titleWrap.appendChild(h2);
+  const dl = document.createElement("a");
+  dl.className = "ghost primary doc-download";
+  dl.href = SG.docUrl(doc.path);
+  dl.setAttribute("download", SG.fileName(doc.path));
+  dl.textContent = "다운로드";
+  titleWrap.appendChild(dl);
+  head.appendChild(titleWrap);
   el.appendChild(head);
 
   const body = document.createElement("div");
@@ -154,6 +167,7 @@ SG.renderDocInto = async function (el, doc) {
     const a = document.createElement("a");
     a.className = "ghost primary";
     a.href = SG.docUrl(doc.path);
+    a.setAttribute("download", SG.fileName(doc.path));
     a.textContent = "원본 열기";
     card.appendChild(a);
     body.appendChild(card);

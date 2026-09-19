@@ -96,11 +96,6 @@ SG.closeDoc = function () {
       return;
     }
     if (open) return;
-    if (e.key === "d" || e.key === "D") {
-      e.preventDefault();
-      SG.openDoc();
-      return;
-    }
     if (["ArrowRight", "ArrowDown", "PageDown", " "].includes(e.key)) {
       e.preventDefault();
       go(i + 1);

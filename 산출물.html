@@ -16,7 +16,7 @@
     const overlay = document.getElementById("doc-overlay");
     overlay.classList.add("open");
     const close = document.getElementById("doc-close");
-    close.textContent = "발표 허브";
+    close.textContent = "목록";
     close.onclick = function () { location.href = "index.html"; };
     const h = location.hash.replace("#", "");
     const id = h.startsWith("doc=") ? h.slice(4) : (h || "def");

@@ -177,6 +177,21 @@ h2 {
 .grid.three { grid-template-columns: 1fr 1fr 1fr; }
 .grid.five { grid-template-columns: repeat(5, 1fr); }
 
+.agenda { display: flex; flex-direction: column; gap: 10px; }
+.agenda .card {
+  display: flex;
+  align-items: baseline;
+  gap: 18px;
+  padding: 14px 18px;
+}
+.agenda b {
+  color: var(--amber);
+  font-size: 22px;
+  min-width: 40px;
+  letter-spacing: 0.04em;
+}
+.agenda h3 { margin-bottom: 4px; }
+
 .card {
   background: var(--panel);
   border: 1px solid var(--line);

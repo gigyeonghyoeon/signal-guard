@@ -389,6 +389,11 @@ footer.bar {
 .cover-team { margin-top: 36px; color: var(--muted); font-size: 15px; line-height: 1.7; }
 .cover-team b { color: var(--text); }
 
+html.doc-open,
+body.doc-open {
+  overflow: hidden;
+  height: 100%;
+}
 #doc-overlay {
   display: none;
   position: fixed;
@@ -396,7 +401,11 @@ footer.bar {
   z-index: 40;
   background: var(--bg);
 }
-#doc-overlay.open { display: block; overflow: auto; }
+#doc-overlay.open {
+  display: block;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
 .doc-main { position: relative; min-height: 100%; padding: 28px 36px 48px; }
 .doc-close {
   position: sticky;

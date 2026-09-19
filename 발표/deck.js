@@ -12,6 +12,8 @@ SG.openDoc = async function (id) {
   SG.mountOverlay();
   const overlay = document.getElementById("doc-overlay");
   overlay.classList.add("open");
+  document.documentElement.classList.add("doc-open");
+  document.body.classList.add("doc-open");
   const doc = SG.findDoc(id) || SG_DOCS[0];
   const view = document.getElementById("doc-view");
   view.innerHTML = "<p class='note'>불러오는 중…</p>";
@@ -33,6 +35,8 @@ SG.openDoc = async function (id) {
 SG.closeDoc = function () {
   const overlay = document.getElementById("doc-overlay");
   if (overlay) overlay.classList.remove("open");
+  document.documentElement.classList.remove("doc-open");
+  document.body.classList.remove("doc-open");
   SG._openId = null;
   const n = document.getElementById("pos");
   if (n) history.replaceState(null, "", "#" + n.textContent);

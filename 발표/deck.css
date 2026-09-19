@@ -113,7 +113,6 @@ main#deck {
 .split-diagram-title h2 {
   margin-bottom: 0;
   font-size: clamp(22px, 2.6vw, 34px);
-  white-space: nowrap;
 }
 .split-diagram .arch-frame {
   flex: 1 1 auto;

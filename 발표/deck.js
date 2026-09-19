@@ -3,29 +3,8 @@ SG.mountOverlay = function () {
   const wrap = document.createElement("div");
   wrap.id = "doc-overlay";
   wrap.innerHTML =
-    '<aside class="doc-nav"><div class="doc-nav-head">산출물 원문</div><div id="doc-nav-list"></div></aside>' +
     '<div class="doc-main"><button type="button" class="doc-close" id="doc-close">닫기 Esc</button><div id="doc-view"></div></div>';
   document.body.appendChild(wrap);
-
-  const list = wrap.querySelector("#doc-nav-list");
-  let phase = "";
-  SG_DOCS.forEach((doc) => {
-    if (doc.phase !== phase) {
-      phase = doc.phase;
-      const h = document.createElement("p");
-      h.className = "doc-phase";
-      h.textContent = phase;
-      list.appendChild(h);
-    }
-    const a = document.createElement("button");
-    a.type = "button";
-    a.className = "doc-link";
-    a.dataset.id = doc.id;
-    a.innerHTML = "<b>" + doc.title + "</b><span>" + doc.note + "</span>";
-    a.onclick = () => SG.openDoc(doc.id);
-    list.appendChild(a);
-  });
-
   wrap.querySelector("#doc-close").onclick = () => SG.closeDoc();
 };
 
@@ -34,9 +13,6 @@ SG.openDoc = async function (id) {
   const overlay = document.getElementById("doc-overlay");
   overlay.classList.add("open");
   const doc = SG.findDoc(id) || SG_DOCS[0];
-  overlay.querySelectorAll(".doc-link").forEach((el) => {
-    el.classList.toggle("active", el.dataset.id === doc.id);
-  });
   const view = document.getElementById("doc-view");
   view.innerHTML = "<p class='note'>불러오는 중…</p>";
   SG._openId = doc.id;
@@ -44,7 +20,14 @@ SG.openDoc = async function (id) {
     history.replaceState(null, "", "#doc=" + doc.id);
   }
   await SG.renderDocInto(view, doc);
-  view.scrollTop = 0;
+  const overlayEl = document.getElementById("doc-overlay");
+  overlayEl.scrollTop = 0;
+  if (doc.heading) {
+    const target = Array.from(view.querySelectorAll("h1, h2, h3")).find((n) =>
+      n.textContent.indexOf(doc.heading) !== -1
+    );
+    if (target) target.scrollIntoView({ block: "start" });
+  }
 };
 
 SG.closeDoc = function () {

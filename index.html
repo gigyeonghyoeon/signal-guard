@@ -34,7 +34,7 @@
 
     <section class="hub-section">
       <p class="eyebrow">Weekly reports</p>
-      <h2>주차별 주간 보고</h2>
+      <h2>주차별 발표 자료</h2>
       <ul class="hub-list" id="week-catalog"></ul>
     </section>
   </div>
@@ -61,7 +61,7 @@
         const li = document.createElement("li");
         const btn = document.createElement("button");
         btn.type = "button";
-        btn.innerHTML = "<b>" + doc.title + "</b><span>" + doc.note + "</span>";
+        btn.innerHTML = "<b>" + doc.title + "</b>";
         btn.addEventListener("click", function () { SG.openDoc(doc.id); });
         li.appendChild(btn);
         list.appendChild(li);

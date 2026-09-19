@@ -140,9 +140,23 @@ SG.renderDocInto = async function (el, doc) {
   } catch (err) {
     body.innerHTML =
       "<div class='card'><h3>원문을 읽지 못했습니다</h3>" +
-      "<p>마크다운은 로컬 서버로 열어야 브라우저가 파일을 가져올 수 있습니다. 프로젝트 폴더의 <b>발표서버.bat</b>을 실행한 뒤 <b>http://127.0.0.1:8080/</b> 으로 발표하세요.</p>" +
       "<p>파일 위치: <b>" +
       doc.path +
       "</b></p></div>";
   }
 };
+
+window.SG_WEEKS = [
+  {
+    week: "3주차",
+    title: "주간 보고",
+    href: "발표/3주차.html",
+    note: "분석 단계 마무리"
+  },
+  {
+    week: "4주차",
+    title: "주간 보고",
+    href: "발표/4주차.html",
+    note: "설계 1주차 산출물"
+  }
+];

@@ -3,44 +3,87 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Signal Guard — 발표</title>
+  <title>Signal Guard — 산출물 · 주간 보고</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml" />
   <link rel="stylesheet" href="발표/deck.css" />
 </head>
 <body>
+  <header class="top">
+    <a class="brand" href="index.html">
+      <div class="lamps" aria-hidden="true">
+        <i class="lamp red"></i><i class="lamp amber"></i><i class="lamp green"></i>
+      </div>
+      <div>
+        <strong>Signal Guard</strong>
+        <span>실시간 교통신호 상태정보 오류검지</span>
+      </div>
+    </a>
+    <div class="meta">조찬희 · 기경현</div>
+  </header>
+
   <div class="hub">
     <p class="eyebrow">Signal Guard</p>
-    <h1>주간 발표</h1>
-    <p class="lead">슬라이드는 이번 주 이야기를 짧게 하고, 산출물 원문은 저장소에 있는 파일을 그대로 엽니다.</p>
-    <div class="chips">
-      <span class="chip ok">웹 발표</span>
-      <span class="chip wait">설계 4주차</span>
-    </div>
+    <h1>산출물 · 주간 보고</h1>
+    <p class="lead">목록을 누르면 해당 산출물 원문 또는 그 주 발표가 열립니다.</p>
 
-    <div class="hub-grid">
-      <a class="card" href="발표/4주차.html">
-        <p class="eyebrow">This week</p>
-        <div class="stat">4주차 주간 보고<small>분석 산출물을 설명하고, 설계 1주차 원문을 보여 줍니다.</small></div>
-      </a>
-      <a class="card" href="산출물.html">
-        <p class="eyebrow">Artifacts</p>
-        <div class="stat">산출물 원문<small>분석 5종 · 설계 아키텍처·IA·ERD·API</small></div>
-      </a>
-    </div>
+    <section class="hub-section">
+      <p class="eyebrow">Deliverables</p>
+      <h2>단계별 산출물</h2>
+      <div id="doc-catalog"></div>
+    </section>
 
-    <div class="grid two" style="margin-top:16px">
-      <a class="card" href="발표/3주차.html">
-        <h3>3주차 아카이브</h3>
-        <p>분석 단계 마무리 보고. 산출물 목록 중심.</p>
-      </a>
-      <div class="card">
-        <h3>매주 이렇게 운영</h3>
-        <p>1. 산출물은 분석/설계 폴더의 마크다운이 정본입니다.</p>
-        <p>2. 그 주 발표는 발표/N주차.html 에만 추가합니다.</p>
-        <p>3. 교수님이 원문을 보시면 D 키 또는 산출물 원문 화면으로 전환합니다.</p>
-        <p>4. 구현 주부터는 여기에 실행 중인 앱 주소를 붙입니다.</p>
-      </div>
-    </div>
+    <section class="hub-section">
+      <p class="eyebrow">Weekly reports</p>
+      <h2>주차별 주간 보고</h2>
+      <ul class="hub-list" id="week-catalog"></ul>
+    </section>
   </div>
+
+  <script src="발표/vendor/marked.min.js"></script>
+  <script src="발표/docs.js"></script>
+  <script src="발표/deck.js"></script>
+  <script>
+    (function () {
+      const box = document.getElementById("doc-catalog");
+      let phase = "";
+      let list = null;
+      SG_DOCS.forEach(function (doc) {
+        if (doc.phase !== phase) {
+          phase = doc.phase;
+          const h = document.createElement("p");
+          h.className = "hub-phase";
+          h.textContent = phase;
+          box.appendChild(h);
+          list = document.createElement("ul");
+          list.className = "hub-list";
+          box.appendChild(list);
+        }
+        const li = document.createElement("li");
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.innerHTML = "<b>" + doc.title + "</b><span>" + doc.note + "</span>";
+        btn.addEventListener("click", function () { SG.openDoc(doc.id); });
+        li.appendChild(btn);
+        list.appendChild(li);
+      });
+
+      const weeks = document.getElementById("week-catalog");
+      SG_WEEKS.forEach(function (w) {
+        const li = document.createElement("li");
+        const a = document.createElement("a");
+        a.href = w.href;
+        a.innerHTML = "<b>" + w.week + " " + w.title + "</b><span>" + w.note + "</span>";
+        li.appendChild(a);
+        weeks.appendChild(li);
+      });
+
+      const h = location.hash.replace("#", "");
+      if (h.startsWith("doc=")) SG.openDoc(decodeURIComponent(h.slice(4)));
+
+      window.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") SG.closeDoc();
+      });
+    })();
+  </script>
 </body>
 </html>

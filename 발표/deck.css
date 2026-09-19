@@ -419,16 +419,47 @@ footer.bar {
 
 .hub {
   min-height: 100%;
-  padding: 48px 56px 72px;
-  max-width: 1080px;
+  padding: 36px 56px 72px;
+  max-width: 860px;
   margin: 0 auto;
 }
-.hub h1 { margin: 8px 0 12px; }
-.hub-grid { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 16px; margin-top: 36px; }
-.hub a.card { text-decoration: none; color: inherit; display: block; }
-.hub a.card:hover { border-color: #3b4d6b; }
-.hub .stat { font-size: 28px; font-weight: 700; letter-spacing: -0.04em; }
-.hub .stat small { display: block; margin-top: 6px; font-size: 13px; font-weight: 400; color: var(--muted); }
+.hub h1 { margin: 8px 0 8px; }
+.hub-section { margin-top: 40px; }
+.hub-section h2 { margin-bottom: 8px; }
+.hub-phase {
+  margin: 22px 0 8px;
+  font-size: 13px;
+  color: var(--amber);
+  letter-spacing: 0.08em;
+}
+.hub-list {
+  list-style: none;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--panel);
+}
+.hub-list li + li { border-top: 1px solid var(--line); }
+.hub-list a,
+.hub-list button {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  padding: 14px 16px;
+  background: transparent;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+.hub-list a:hover,
+.hub-list button:hover { background: #161f32; }
+.hub-list b { font-size: 15px; font-weight: 650; }
+.hub-list span { color: var(--muted); font-size: 13px; flex-shrink: 0; }
 
 @media (max-width: 900px) {
   .slide { padding: 24px 18px 56px; }

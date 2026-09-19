@@ -50,8 +50,10 @@ SG.openDoc = async function (id) {
 SG.closeDoc = function () {
   const overlay = document.getElementById("doc-overlay");
   if (overlay) overlay.classList.remove("open");
+  SG._openId = null;
   const n = document.getElementById("pos");
-  history.replaceState(null, "", n ? "#" + n.textContent : "#1");
+  if (n) history.replaceState(null, "", "#" + n.textContent);
+  else history.replaceState(null, "", location.pathname + location.search);
 };
 
 (function () {

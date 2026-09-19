@@ -256,6 +256,10 @@ th { color: var(--muted); font-weight: 500; font-size: 12px; }
   object-position: center;
   background: #000;
 }
+.arch-frame.light,
+.arch-frame.light .arch-img {
+  background: #f4f7fb;
+}
 
 .wire {
   font-family: Consolas, "Courier New", monospace;

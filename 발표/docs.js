@@ -71,7 +71,8 @@ window.SG_DOCS = [
     phase: "설계",
     week: "4",
     title: "ERD",
-    path: "설계/ERD.md"
+    path: "설계/ERD.md",
+    image: "설계/논리ERD.jpg"
   },
   {
     id: "api",

@@ -112,7 +112,7 @@ main#deck {
   margin-bottom: 0;
   font-size: clamp(22px, 2.6vw, 34px);
 }
-.erd-img {
+.diagram-img {
   display: block;
   width: 68%;
   height: auto;
@@ -122,6 +122,9 @@ main#deck {
   object-fit: contain;
   background: #f4f7fb;
   border-radius: 12px;
+}
+.diagram-img.dark {
+  background: #000;
 }
 
 .slide-inner > h1 { margin-bottom: 36px; }

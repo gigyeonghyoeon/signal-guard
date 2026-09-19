@@ -96,29 +96,28 @@ main#deck {
   min-height: 0;
 }
 .slide.exhibit .slide-inner.split-diagram {
-  flex-direction: row;
-  align-items: flex-start;
-  gap: 28px;
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+  align-items: start;
+  column-gap: 28px;
   width: 100%;
   max-width: none;
 }
 .split-diagram-title {
-  flex: 0 0 22%;
-  max-width: 280px;
-  padding: 18px 20px;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  background: var(--panel);
+  grid-column: 1;
+  grid-row: 1;
 }
 .split-diagram-title h2 {
   margin-bottom: 0;
   font-size: clamp(22px, 2.6vw, 34px);
 }
 .split-diagram .arch-frame {
-  flex: 1 1 auto;
-  align-self: stretch;
+  grid-column: 2;
+  grid-row: 1;
   min-width: 0;
   min-height: 0;
+  height: 100%;
 }
 
 .slide-inner > h1 { margin-bottom: 36px; }

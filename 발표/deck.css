@@ -95,6 +95,27 @@ main#deck {
   flex-direction: column;
   min-height: 0;
 }
+.slide.exhibit .slide-inner.split-diagram {
+  flex-direction: row;
+  align-items: stretch;
+  gap: 20px;
+  width: 100%;
+  max-width: none;
+}
+.split-diagram-title {
+  flex: 0 0 auto;
+  width: 9.5rem;
+  padding-top: 2px;
+}
+.split-diagram-title h2 {
+  margin-bottom: 0;
+  font-size: clamp(22px, 2.4vw, 32px);
+}
+.split-diagram .arch-frame {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 100%;
+}
 
 .slide-inner > h1 { margin-bottom: 36px; }
 

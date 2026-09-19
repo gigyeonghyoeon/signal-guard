@@ -22,6 +22,14 @@ window.SG_DOCS = [
     path: "분석/요구사항정의서.md"
   },
   {
+    id: "req-xlsx",
+    phase: "분석",
+    week: "1–3",
+    title: "요구사항 정의서 엑셀",
+    path: "분석/Signal_Guard_요구사항정의서.xlsx",
+    type: "file"
+  },
+  {
     id: "rfp",
     phase: "분석",
     week: "1–3",
@@ -50,6 +58,22 @@ window.SG_DOCS = [
     title: "WBS",
     path: "백로그WBS.md",
     heading: "4. WBS"
+  },
+  {
+    id: "wbs-xlsx",
+    phase: "분석",
+    week: "1–3",
+    title: "WBS 엑셀",
+    path: "SignalGuard_WBS.xlsx",
+    type: "file"
+  },
+  {
+    id: "plan-xlsx",
+    phase: "분석",
+    week: "1–3",
+    title: "계획 진행표",
+    path: "SignalGuard_계획진행표.xlsx",
+    type: "file"
   },
   {
     id: "arch",

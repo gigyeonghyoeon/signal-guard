@@ -40,7 +40,7 @@
   </div>
 
   <script src="발표/vendor/marked.min.js"></script>
-  <script src="발표/docs.js"></script>
+  <script src="발표/docs.js?v=xlsx1"></script>
   <script src="발표/deck.js"></script>
   <script>
     (function () {
@@ -59,11 +59,18 @@
           box.appendChild(list);
         }
         const li = document.createElement("li");
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.innerHTML = "<b>" + doc.title + "</b>";
-        btn.addEventListener("click", function () { SG.openDoc(doc.id); });
-        li.appendChild(btn);
+        if (doc.type === "file") {
+          const a = document.createElement("a");
+          a.href = SG.docUrl(doc.path);
+          a.innerHTML = "<b>" + doc.title + "</b>";
+          li.appendChild(a);
+        } else {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.innerHTML = "<b>" + doc.title + "</b>";
+          btn.addEventListener("click", function () { SG.openDoc(doc.id); });
+          li.appendChild(btn);
+        }
         list.appendChild(li);
       });
 

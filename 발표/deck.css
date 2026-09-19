@@ -96,28 +96,29 @@ main#deck {
   min-height: 0;
 }
 .slide.exhibit .slide-inner.split-diagram {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: start;
+  display: block;
+  position: relative;
   width: 100%;
   max-width: none;
   height: 100%;
 }
 .split-diagram-title {
-  grid-column: 1;
-  justify-self: start;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
 }
 .split-diagram-title h2 {
   margin-bottom: 0;
   font-size: clamp(22px, 2.6vw, 34px);
 }
 .erd-img {
-  grid-column: 2;
   display: block;
-  width: auto;
+  width: 68%;
   height: auto;
-  max-width: min(72vw, 1100px);
   max-height: 100%;
+  margin-left: auto;
+  margin-right: auto;
   object-fit: contain;
   background: #f4f7fb;
   border-radius: 12px;

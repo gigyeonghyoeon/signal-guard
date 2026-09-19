@@ -97,10 +97,11 @@ main#deck {
 }
 .slide.exhibit .slide-inner.split-diagram {
   display: grid;
-  grid-template-columns: max-content minmax(0, 1fr);
-  grid-template-rows: minmax(0, 1fr);
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-rows: auto;
   align-items: start;
-  column-gap: 28px;
+  align-content: start;
+  column-gap: 24px;
   width: 100%;
   max-width: none;
 }
@@ -112,12 +113,17 @@ main#deck {
   margin-bottom: 0;
   font-size: clamp(22px, 2.6vw, 34px);
 }
-.split-diagram .arch-frame {
+.erd-img {
   grid-column: 2;
   grid-row: 1;
-  min-width: 0;
-  min-height: 0;
-  height: 100%;
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+  object-fit: contain;
+  object-position: top left;
+  background: #f4f7fb;
+  border-radius: 12px;
 }
 
 .slide-inner > h1 { margin-bottom: 36px; }

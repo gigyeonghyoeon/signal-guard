@@ -123,8 +123,8 @@ main#deck {
   background: #f4f7fb;
   border-radius: 12px;
 }
-.diagram-img.dark {
-  background: #000;
+.diagram-img.white {
+  background: #fff;
 }
 
 .slide-inner > h1 { margin-bottom: 36px; }

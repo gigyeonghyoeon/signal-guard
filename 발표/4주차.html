@@ -52,43 +52,6 @@
       </div>
     </section>
 
-    <section class="slide" data-title="목차">
-      <div class="slide-inner">
-        <p class="eyebrow">Agenda</p>
-        <h2>발표 순서</h2>
-        <div class="agenda">
-          <div class="card">
-            <b>01</b>
-            <div>
-              <h3>프로젝트 위치</h3>
-              <p>15주 일정에서 지금은 설계 4주차입니다.</p>
-            </div>
-          </div>
-          <div class="card">
-            <b>02</b>
-            <div>
-              <h3>분석 산출물</h3>
-              <p>정의서·대응표·요구사항·유스케이스·백로그를 문서별로 설명합니다.</p>
-            </div>
-          </div>
-          <div class="card">
-            <b>03</b>
-            <div>
-              <h3>설계 산출물</h3>
-              <p>아키텍처·화면 IA·ERD·API 명세 0.1을 보고합니다.</p>
-            </div>
-          </div>
-          <div class="card">
-            <b>04</b>
-            <div>
-              <h3>다음 할 일</h3>
-              <p>5주차 규칙 명세·프로토타입·미결 확정과 M2 게이트입니다.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
     <section class="slide" data-title="요구사항 원칙">
       <div class="slide-inner">
         <p class="eyebrow">Analysis · 요구사항정의서</p>
@@ -101,14 +64,13 @@
           <div class="card"><h3>What vs How</h3><p>무엇을만 적고, 스택은 설계로.</p></div>
           <div class="card"><h3>범위</h3><p>MVP 포함과 제외를 명시해 오해를 막는다.</p></div>
         </div>
-        <p class="note" style="margin-top:16px">기능 요구 FR 약 40개 · 비기능 NFR 11개 · 검증 규칙 R01–R12. 필수 요구는 12–13주 테스트에서 반드시 통과해야 MVP로 인정합니다.</p>
       </div>
     </section>
 
     <section class="slide" data-title="시스템 경계">
       <div class="slide-inner">
         <p class="eyebrow">Analysis · 요구사항정의서</p>
-        <h2>시스템 경계는 검지 · 관제 · 통제입니다</h2>
+        <h2>시스템 경계는 검지 · 관제 · 통제</h2>
         <div class="grid three">
           <div class="card">
             <h3 style="color:#86efac">검지</h3>
@@ -129,7 +91,6 @@
             <p>현장 요청은 기록만. 신호기 명령 없음.</p>
           </div>
         </div>
-        <p class="note" style="margin-top:18px"><strong>원본 수신은 불변입니다.</strong> 자동보정과 관리자 수정은 제공 계층만 바꿉니다. 해결 가능(중복, 동의어, 짧은 공백)은 시스템이 보정하고, 해결 불가(충돌 녹색, 지속 불일치)는 이슈로 올려 사람이 닫습니다.</p>
       </div>
     </section>
 
@@ -221,14 +182,13 @@
             <tr><td>REST API 명세</td><td>WBS-3.5</td><td>/api/v1 경로, RBAC, 원본 수정 API 없음</td><td>기경현</td></tr>
           </tbody>
         </table>
-        <p class="note" style="margin-top:14px"><strong>아직 숫자로 닫지 않은 것.</strong> 프론트/백엔드 스택, 표본 교차로 수 N과 주기 T, UTIC 대체, 웹소켓·지도 1차 여부, 규칙 임계 기본값.</p>
       </div>
     </section>
 
     <section class="slide" data-title="5계층">
       <div class="slide-inner">
         <p class="eyebrow">Design · 시스템 아키텍처</p>
-        <h2>시스템은 5계층으로 나눕니다</h2>
+        <h2>시스템 5계층</h2>
         <div class="grid five">
           <div class="card"><h3>1 사용자</h3><p>운영자·관리자 브라우저. 외부 API 키를 두지 않고 REST만 호출합니다.</p></div>
           <div class="card"><h3>2 애플리케이션</h3><p>인증, 수집·정규화, 검지 엔진, 이슈·통제 API. 요청 경로와 배치 경로를 분리합니다.</p></div>
@@ -243,7 +203,7 @@
       <div class="slide-inner">
         <p class="eyebrow">Design · 시스템 아키텍처</p>
         <h2>논리 구성도</h2>
-        <div class="scroll" style="background:#fff; display:flex; align-items:center; justify-content:center;">
+        <div class="arch-frame">
           <img class="arch-img" src="../설계/시스템 아키텍처 구조도.png" alt="Signal Guard 시스템 아키텍처 구조도" />
         </div>
       </div>
@@ -293,11 +253,9 @@
               <tr><td>관제</td><td>GET /dashboard/summary, /intersections/{id}, /issues</td><td>운영자·관리자</td></tr>
               <tr><td>통제</td><td>정보 통제·제공 차단·현장 요청·계획 PUT</td><td>관리자만. 운영자 403</td></tr>
               <tr><td>설정</td><td>수집 대상, 규칙 임계값, 계정 CRUD, 쿼터</td><td>관리자만</td></tr>
-              <tr><td>만들지 않음</td><td>원본 UPDATE, 신호기 전송, 외부 API 래핑</td><td>경로 자체가 없음</td></tr>
             </tbody>
           </table>
         </div>
-        <p class="note" style="margin-top:12px">경로·JSON·403 규칙은 Spring/Node 어느 쪽이든 같습니다. JWT와 세션 쿠키는 5주 게이트에서 고릅니다.</p>
       </div>
     </section>
 
@@ -315,14 +273,13 @@
             <tr><td>설계 리뷰</td><td>미결 1–6 닫기, M2 체크</td><td>공동</td><td>구현 착수 게이트</td></tr>
           </tbody>
         </table>
-        <p class="note" style="margin-top:14px">용량이 부족하면 프로토타입은 정적 와이어로 축소할 수 있습니다. 규칙 명세와 미결 확정은 축소하지 않습니다.</p>
       </div>
     </section>
 
     <section class="slide" data-title="5주차 산출물">
       <div class="slide-inner">
         <p class="eyebrow">Next · Deliverables</p>
-        <h2>5주차에 나와야 하는 산출물</h2>
+        <h2>5주차 산출물</h2>
         <div class="grid two">
           <div class="card"><h3>검증 규칙 명세서</h3><p>각 규칙의 입력, 정상/경계/오류 예, 자동보정 vs 이슈 분기, 임계 기본값. 구현 S3–S4의 테스트 헤더가 됩니다.</p></div>
           <div class="card"><h3>화면 프로토타입</h3><p>필수 3화면을 클릭해 관제 루프를 따라갑니다. 화면 ID는 SCR-DASH, SCR-INT-DETAIL, SCR-ISS입니다.</p></div>

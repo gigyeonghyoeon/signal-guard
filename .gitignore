@@ -7,3 +7,6 @@ __pycache__/
 .DS_Store
 Thumbs.db
 node_modules/
+~$*
+*.tmp
+_build_week4_pptx.py

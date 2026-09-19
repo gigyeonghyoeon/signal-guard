@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ko" data-base="../">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Signal Guard — 3주차 주간 보고</title>
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="deck.css" />
+</head>
+<body class="deck-page">
+  <div class="stage">
+    <header class="top">
+      <a class="brand" href="../index.html">
+        <div class="lamps" aria-hidden="true">
+          <i class="lamp red"></i><i class="lamp amber"></i><i class="lamp green"></i>
+        </div>
+        <div>
+          <strong>Signal Guard</strong>
+          <span>실시간 교통신호 상태정보 오류검지</span>
+        </div>
+      </a>
+      <div class="meta">
+        <span>3주차 주간 보고</span>
+        <button class="ghost" type="button" data-open-doc="def">산출물 원문</button>
+        <a class="ghost" href="../index.html">허브</a>
+      </div>
+    </header>
+    <main id="deck"></main>
+    <footer class="bar">
+      <button class="nav-btn" id="prev" type="button">이전</button>
+      <div class="progress"><i id="bar"></i></div>
+      <div class="hint"><span id="pos">1</span> / <span id="total">0</span> · 방향키 · D 원문</div>
+      <button class="nav-btn" id="next" type="button">다음</button>
+    </footer>
+  </div>
+
+  <template id="slides">
+    <section class="slide slide-cover" data-title="표지">
+      <div class="slide-inner">
+        <div class="cover-title">
+          <p class="eyebrow">Week 3 · Weekly Report</p>
+          <h1>3주차 주간 보고</h1>
+          <p class="lead">이번 주는 분석 단계의 마무리 단계<br />다음 주는 화면·구조 설계 시작</p>
+          <div class="chips"><span class="chip ok">분석 단계</span></div>
+          <p class="cover-team">
+            <b>조찬희</b> 기획·PM · <b>기경현</b> 백엔드·데이터<br />
+            기간 1–3주 · 보고일 2026.09.14
+          </p>
+        </div>
+        <div class="cover-mark">
+          <div class="name">Signal<br />Guard</div>
+          <p class="sub">실시간 교통신호 상태정보<br />오류검지 시스템</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="산출물">
+      <div class="slide-inner">
+        <p class="eyebrow">Deliverables</p>
+        <h2>이번에 작성한 것</h2>
+        <table>
+          <thead><tr><th>산출물</th><th>역할</th><th>규모</th></tr></thead>
+          <tbody>
+            <tr><td>프로젝트정의서</td><td>왜 만드는가, 범위, 데이터에 대한 정의</td><td>수업 MVP</td></tr>
+            <tr><td>제안요청서 요구사항 대응표</td><td>공단 요청 39건을 수업에서 어디에 붙일지</td><td>구현 7 / 부분 17</td></tr>
+            <tr><td>요구사항정의서</td><td>무엇을 만들지, 테스트로 가릴 기준</td><td>기능·비기능 요구</td></tr>
+            <tr><td>유스케이스·사용자 스토리</td><td>누가, 어떤 흐름으로 사용할지</td><td>흐름 11개 · 구현 단위 33개</td></tr>
+            <tr><td>제품 백로그 · WBS</td><td>언제, 누가, 몇 주에 할 작업 내용</td><td>15주 작업 목록</td></tr>
+          </tbody>
+        </table>
+        <p class="note" style="margin-top:16px">원문은 <button class="ghost primary" type="button" data-open-doc="def">산출물 보기</button> 또는 D 키로 엽니다.</p>
+      </div>
+    </section>
+
+    <section class="slide" data-title="작성 방식">
+      <div class="slide-inner">
+        <p class="eyebrow">How we wrote</p>
+        <h1>작성 방법</h1>
+        <div class="grid two">
+          <div class="card">
+            <h3>작성 원칙</h3>
+            <ul>
+              <li>요구사항 별로 ID를 부여, 정의</li>
+              <li>요구사항에 통과 기준 정의</li>
+              <li>제안요청서의 내용을 토대로 요구사항을 연결</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>구현을 위한 범위 정의</h3>
+            <ul>
+              <li>신호 데이터는 인천시 데이터로 제한</li>
+              <li>제안요청서 중 실제 개발 범위 정의</li>
+              <li>수업범위 내에서 산출물 정의</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="문서별">
+      <div class="slide-inner">
+        <p class="eyebrow">Per document</p>
+        <h2>작성된 산출물</h2>
+        <div class="grid two">
+          <div class="card">
+            <h3>프로젝트정의서</h3>
+            <p>공단 제안요청서를 수업 범위로 줄였다. 수집→검지→관제→통제, 실시간 API와 계획 데이터의 대조.</p>
+          </div>
+          <div class="card">
+            <h3>제안요청서 대응표</h3>
+            <p>요청 39건 중 구현하는 부분은 24건.</p>
+          </div>
+          <div class="card">
+            <h3>요구사항정의서</h3>
+            <p>무엇을 만들지 ID로 쪼개고, 테스트로 통과·실패를 가릴 수 있게 적었다. 통제는 정보·계획·현장 요청으로 나눴다.</p>
+          </div>
+          <div class="card">
+            <h3>유스케이스 · 백로그</h3>
+            <p>흐름 11개, 구현 단위 33개. 백로그를 15주 일정에 따라 분배.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="다음 주">
+      <div class="slide-inner">
+        <p class="eyebrow">Next week · 4주차</p>
+        <h2>다음주 할일</h2>
+        <table>
+          <thead><tr><th>할 일</th><th>담당</th></tr></thead>
+          <tbody>
+            <tr><td>프론트·백엔드 스택 확정, 시스템 구성도</td><td>공동</td></tr>
+            <tr><td>표본 교차로 수 × 수집 주기 × 보관</td><td>기경현</td></tr>
+            <tr><td>필수 화면 IA · 와이어</td><td>조찬희</td></tr>
+            <tr><td>개념·논리 ERD</td><td>기경현</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="slide" data-title="5주차">
+      <div class="slide-inner">
+        <p class="eyebrow">After next week · 5주차</p>
+        <h2>설계 단계에서 나올 산출물</h2>
+        <div class="grid two">
+          <div class="card"><h3>API 명세서</h3><p>화면이 서버에 무엇을 요청하는지 적어 둔다.</p></div>
+          <div class="card"><h3>검증 규칙 명세서</h3><p>어떤 신호를 오류로 볼지 규칙을 적는다.</p></div>
+          <div class="card"><h3>화면 프로토타입</h3><p>대시보드·이슈·교차로 상세를 클릭해 보게 만든다.</p></div>
+          <div class="card"><h3>설계 리뷰</h3><p>4–5주 설계를 한 번 점검하고 구현으로 넘어간다.</p></div>
+        </div>
+      </div>
+    </section>
+  </template>
+
+  <script src="vendor/marked.min.js"></script>
+  <script src="docs.js"></script>
+  <script src="deck.js"></script>
+</body>
+</html>

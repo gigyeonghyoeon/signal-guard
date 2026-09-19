@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ko" data-base="./">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Signal Guard — 산출물 원문</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="발표/deck.css" />
+</head>
+<body>
+  <script src="발표/vendor/marked.min.js"></script>
+  <script src="발표/docs.js"></script>
+  <script src="발표/deck.js"></script>
+  <script>
+    SG.mountOverlay();
+    const overlay = document.getElementById("doc-overlay");
+    overlay.classList.add("open");
+    const close = document.getElementById("doc-close");
+    close.textContent = "발표 허브";
+    close.onclick = function () { location.href = "index.html"; };
+    const h = location.hash.replace("#", "");
+    const id = h.startsWith("doc=") ? h.slice(4) : (h || "def");
+    SG.openDoc(id);
+  </script>
+</body>
+</html>

@@ -88,7 +88,8 @@ window.SG_DOCS = [
     phase: "설계",
     week: "4",
     title: "화면 IA 설계서",
-    path: "설계/화면IA.md"
+    path: "설계/화면IA.md",
+    hidden: true
   },
   {
     id: "erd",

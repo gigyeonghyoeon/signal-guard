@@ -172,12 +172,11 @@
       <div class="slide-inner">
         <p class="eyebrow">Design · Week 4</p>
         <h2>4주차 작성한 산출물</h2>
-        <p class="note" style="margin-bottom:12px">분석이 ‘무엇을’이면 설계는 ‘어떻게 나눌지’입니다. 이번 주는 논리 구조와 화면·데이터·API의 0.1을 고정했습니다.</p>
+        <p class="note" style="margin-bottom:12px">분석이 ‘무엇을’이면 설계는 ‘어떻게 나눌지’입니다. 이번 주는 논리 구조와 API의 0.1을 고정했습니다.</p>
         <table>
           <thead><tr><th>산출물</th><th>WBS</th><th>이번에 고정한 내용</th><th>주 담당</th></tr></thead>
           <tbody>
             <tr><td>시스템 아키텍처</td><td>WBS-3.1</td><td>5계층 구성, 컴포넌트, 원본/제공 분리, 용량 산정식</td><td>공동</td></tr>
-            <tr><td>화면 IA · 와이어</td><td>WBS-3.3</td><td>필수 6화면, 메뉴·권한, 이슈 상세의 통제 패널</td><td>조찬희</td></tr>
             <tr><td>REST API 명세</td><td>WBS-3.5</td><td>/api/v1 경로, RBAC, 원본 수정 API 없음</td><td>기경현</td></tr>
           </tbody>
         </table>
@@ -205,21 +204,6 @@
           <h2>시스템 아키텍처 구조도</h2>
         </div>
         <img class="diagram-img dark" src="../설계/시스템 아키텍처 구조도.png" alt="Signal Guard 시스템 아키텍처 구조도" />
-      </div>
-    </section>
-
-    <section class="slide" data-title="화면 IA">
-      <div class="slide-inner">
-        <p class="eyebrow">Design · 화면 IA</p>
-        <h2>화면 IA</h2>
-        <p class="note" style="margin-bottom:14px">로그인 직후 운영 규모가 보이고, 이상 교차로 → 상세 → 이슈 → 통제가 이어집니다.</p>
-        <div class="grid three">
-          <div class="card"><h3>대시보드</h3><p>오류 수 · 지연 · 자동보정 · 미처리 이슈</p></div>
-          <div class="card"><h3>교차로 상세</h3><p>현재 신호와 계획, 원본과 제공을 나란히</p></div>
-          <div class="card"><h3>오류·이슈</h3><p>목록과 상세. 관리자 통제 패널은 여기</p></div>
-          <div class="card"><h3>신호 계획</h3><p>TOD·현시 조회. 관리자만 수정·재검증</p></div>
-          <div class="card"><h3>통계</h3><p>유형·교차로·기간 집계, CSV</p></div>
-        </div>
       </div>
     </section>
 
@@ -265,7 +249,7 @@
           <div class="card"><h3>검증 규칙 명세서</h3><p>각 규칙의 입력, 정상/경계/오류 예, 자동보정 vs 이슈 분기, 임계 기본값. 구현 S3–S4의 테스트 헤더가 됩니다.</p></div>
           <div class="card"><h3>화면 프로토타입</h3><p>필수 3화면을 클릭해 관제 루프를 따라갑니다. 화면 ID는 SCR-DASH, SCR-INT-DETAIL, SCR-ISS입니다.</p></div>
           <div class="card"><h3>설계 리뷰 기록</h3><p>스택, N×T, 계획 대체, 푸시/지도, 임계값을 결정으로 남깁니다. 아키텍처를 0.2로 올립니다.</p></div>
-          <div class="card"><h3>M2 게이트</h3><p>API·규칙·화면이 저장소에 있고 팀이 같은 결정을 말할 수 있어야 6주 S1(기동·로그인)을 엽니다.</p></div>
+          <div class="card"><h3>M2 게이트</h3><p>API·규칙이 저장소에 있고 팀이 같은 결정을 말할 수 있어야 6주 S1(기동·로그인)을 엽니다.</p></div>
         </div>
       </div>
     </section>
@@ -286,7 +270,7 @@
   </template>
 
   <script src="vendor/marked.min.js"></script>
-  <script src="docs.js?v=dl2"></script>
+  <script src="docs.js?v=dl3"></script>
   <script src="deck.js"></script>
 </body>
 </html>

@@ -96,7 +96,8 @@ window.SG_DOCS = [
     week: "4",
     title: "ERD",
     path: "설계/ERD.md",
-    image: "설계/논리ERD.jpg"
+    image: "설계/논리ERD.jpg",
+    hidden: true
   },
   {
     id: "api",

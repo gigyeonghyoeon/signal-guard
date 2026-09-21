@@ -9,12 +9,17 @@ SG.mountOverlay = function () {
 };
 
 SG.openDoc = async function (id) {
+  const found = SG.findDoc(id);
+  if (found && found.hidden) {
+    SG.closeDoc();
+    return;
+  }
   SG.mountOverlay();
   const overlay = document.getElementById("doc-overlay");
   overlay.classList.add("open");
   document.documentElement.classList.add("doc-open");
   document.body.classList.add("doc-open");
-  const doc = SG.findDoc(id) || SG_DOCS[0];
+  const doc = found || SG_DOCS.find(function (d) { return !d.hidden; }) || SG_DOCS[0];
   const view = document.getElementById("doc-view");
   view.innerHTML = "<p class='note'>불러오는 중…</p>";
   SG._openId = doc.id;

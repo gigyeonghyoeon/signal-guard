@@ -40,7 +40,7 @@
   </div>
 
   <script src="발표/vendor/marked.min.js"></script>
-  <script src="발표/docs.js?v=dl1"></script>
+  <script src="발표/docs.js?v=dl2"></script>
   <script src="발표/deck.js"></script>
   <script>
     (function () {
@@ -48,6 +48,7 @@
       let phase = "";
       let list = null;
       SG_DOCS.forEach(function (doc) {
+        if (doc.hidden) return;
         if (doc.phase !== phase) {
           phase = doc.phase;
           const h = document.createElement("p");

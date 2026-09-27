@@ -43,7 +43,7 @@
           <div class="chips"><span class="chip wait">계획 변경</span><span class="chip ok">설계 S-D2</span></div>
           <p class="cover-team">
             <b>조찬희</b> · <b>기경현</b><br />
-            웹 프레임워크 (조규철 교수님) · 2026.09.27
+            웹 프레임워크 (조규철 교수님) · 2026.09.28
           </p>
         </div>
         <div class="cover-mark">
@@ -60,8 +60,8 @@
         <table>
           <thead><tr><th>산출</th><th>내용</th><th>담당</th></tr></thead>
           <tbody>
-            <tr><td>클릭 프로토타입</td><td>대시보드·교차로·이슈·계획·통제를 클릭으로 따라간다</td><td>조찬희</td></tr>
-            <tr><td>자료흐름도</td><td>수집·검지·통제로 데이터가 어디서 들어와 어디에 쌓이는지 고정</td><td>공동</td></tr>
+            <tr><td>화면 설계서 작성</td><td>사이트맵, 필수 화면 구역, 역할별 메뉴와 권한을 고정</td><td>조찬희</td></tr>
+            <tr><td>프로토타입 화면 작성</td><td>대시보드·교차로 상세·이슈·계획·통제 화면을 클릭으로 작성</td><td>조찬희</td></tr>
             <tr><td>수집원 재검토</td><td>실시간 API로 인천 표본을 대조할 수 있는지 확인</td><td>공동</td></tr>
           </tbody>
         </table>
@@ -69,10 +69,10 @@
       </div>
     </section>
 
-    <section class="slide" data-title="당초 계획">
+    <section class="slide" data-title="최초 계획">
       <div class="slide-inner">
         <p class="eyebrow">Original plan</p>
-        <h2>당초에는 실측과 계획을 대조</h2>
+        <h2>최초 계획</h2>
         <div class="grid two">
           <div class="card">
             <h3 style="color:#86efac">실측값 · 실시간 신호</h3>
@@ -91,25 +91,21 @@
       </div>
     </section>
 
-    <section class="slide" data-title="확인한 사실">
+    <section class="slide" data-title="변경 사유">
       <div class="slide-inner">
-        <p class="eyebrow">What we found</p>
-        <h2>전국은 보이지만, 목표 지역은 비어 있다</h2>
-        <div class="grid three">
+        <p class="eyebrow">Why it changed</p>
+        <h2>변경 사유</h2>
+        <div class="grid two">
           <div class="card">
-            <h3>보이는 것</h3>
-            <p>실시간 API는 전국 교차로를 돌려준다. 목록·좌표 수준에서는 응답이 있다.</p>
+            <h3>쓰려던 방식</h3>
+            <p>실시간 API로 신호 상태를 받아 신호 계획과 대조하려고 했습니다.</p>
           </div>
           <div class="card">
-            <h3>비어 있는 것</h3>
-            <p>목표로 둔 인천 표본은 잔여시간·점등 같은 실시간 값이 비어 있는 교차로가 많다.</p>
-          </div>
-          <div class="card">
-            <h3>그래서 막히는 것</h3>
-            <p>빈 실측으로는 계획과 대조할 수 없고, 같은 입력으로 검지·시연을 반복할 수 없다.</p>
+            <h3>확인한 데이터</h3>
+            <p>전국 데이터로 표시되어 있으나, 비어 있는 항목이 많습니다.</p>
           </div>
         </div>
-        <p class="note" style="margin-top:16px">계획 쪽 UTIC 미승인과는 별개입니다. 이번에는 <strong>상태(실측) 수집원</strong>이 목표 지역을 채우지 못합니다.</p>
+        <p class="note" style="margin-top:16px">빈 값이 많아 목표 지역의 실측으로 계획과 대조하기 어렵습니다.</p>
       </div>
     </section>
 
@@ -126,31 +122,7 @@
             <tr><td>시연</td><td>실시간 수신을 전제</td><td>임의 데이터임을 화면에 밝힘</td></tr>
           </tbody>
         </table>
-        <p class="note" style="margin-top:16px">임의 데이터는 8방향, 잔여시간, 점등상태를 실시간 API와 같은 모양으로 채웁니다. 저장·정규화·검증 경로는 그대로 두고, 원본 수신은 덮어쓰지 않습니다.</p>
-      </div>
-    </section>
-
-    <section class="slide" data-title="유지">
-      <div class="slide-inner">
-        <p class="eyebrow">What stays</p>
-        <h2>바뀌지 않는 것</h2>
-        <div class="grid three">
-          <div class="card">
-            <h3>검지</h3>
-            <p>기대(계획)와 실측(상태)을 규칙으로 비교한다.</p>
-            <p>임의 값이어도 급변·불일치·누락을 심어 규칙을 검증한다.</p>
-          </div>
-          <div class="card">
-            <h3>관제 · 통제</h3>
-            <p>대시보드와 이슈로 보고, 정보·계획·현장 요청으로 닫는다.</p>
-            <p>신호기에는 명령을 보내지 않는다.</p>
-          </div>
-          <div class="card">
-            <h3>실시간 API</h3>
-            <p>요구 자체는 지우지 않는다.</p>
-            <p>목표 지역 값이 채워지면 같은 스키마로 적재한다. 수업 검증의 기준 입력만 임의 데이터다.</p>
-          </div>
-        </div>
+        <p class="note" style="margin-top:16px">임의 데이터는 8방향, 잔여시간, 점등상태를 실시간 API와 같은 모양으로 채웁니다.</p>
       </div>
     </section>
 

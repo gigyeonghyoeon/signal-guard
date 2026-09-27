@@ -4,7 +4,7 @@
 |------|------|
 | 문서명 | 실시간 교통신호 상태정보 오류검지 시스템 논리 데이터 모델 |
 | 프로젝트 | Signal Guard |
-| 버전 | 0.1 |
+| 버전 | 0.2 |
 | 작성일 | 2026-09-19 |
 | 작성 | 기경현 (백엔드·데이터), 조찬희 (기획·PM) |
 | 단계 | 설계 1주차 (전체 4주, WBS-3.4) |
@@ -16,7 +16,8 @@
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|-----------|
-| 0.1 | 2026-09-19 | 기경현, 조찬희 | 최초 작성. 개념 모델·논리 ERD·엔터티 사전·원본/제공 분리·명명 규칙을 확정. 물리 길이·파티션은 구현 EN-DB-01 |
+| 0.1 | 2026-09-19 | 기경현, 조찬희 | 최초 작성. 개념 모델·논리 ERD·엔터티 사전·원본/제공 분리·명명 규칙을 확정. 물리 길이·파티션은 구현 EN-DB-01. 상태 원본은 당시 원래 계획인 실시간 API 수신을 전제 |
+| 0.2 | 2026-09-27 | 기경현, 조찬희 | 상태 수집 수정 계획. 원래 계획 2026-09-18은 `LIVE_API`. 수정일 2026-09-27부터 `collection_batch.input_source`에 `FIXTURE`(수업 기준, 임의의 신호 데이터)와 `LIVE_API`(보조)를 둔다. 행 모양은 같다. 쿼터는 `LIVE_API`만. 정본은 요구사항 정의서 엑셀 1.4 |
 
 ---
 
@@ -227,6 +228,7 @@ flowchart LR
 | 코드 그룹 | 값 |
 |-----------|-----|
 | `batch_type` | `MAP` / `STATUS` / `UTIC` / `AGG` |
+| `input_source` | `FIXTURE`(수정 계획 2026-09-27, 수업 기준) / `LIVE_API`(원래 계획 2026-09-18, 지금은 보조 경로) |
 | `batch_status` | `RUNNING` / `SUCCESS` / `PARTIAL` / `FAILED` / `QUOTA_STOP` |
 | `issue_status` | `OPEN` `ACK` `IN_PROGRESS` `RESOLVED` `CLOSED` `FALSE_POSITIVE` |
 | `control_type` | `AUTO_INFO` `MANUAL_INFO` `PLAN_UPDATE` `PUBLISH_BLOCK` `PUBLISH_UNBLOCK` `FIELD_REQUEST` |
@@ -354,6 +356,7 @@ erDiagram
   COLLECTION_BATCH {
     ID id PK
     CODE batch_type
+    CODE input_source
     CODE batch_status
     TS started_at
     TS finished_at
@@ -698,10 +701,11 @@ CHECK: `phase_a_id < phase_b_id` 로 쌍 중복을 줄인다.
 |------|------|------|------|
 | id | ID | N | 제공 계층·검증이 참조하는 배치 ID |
 | batch_type | CODE | N | MAP / STATUS / UTIC / AGG |
+| input_source | CODE | Y | 맵·상태 배치는 `FIXTURE` 또는 `LIVE_API`가 필수. `FIXTURE`는 수정일 2026-09-27의 수업 기준 입력(녹화 픽스처)이고 호출 수를 올리지 않는다. `LIVE_API`는 원래 계획(2026-09-18)의 실시간 호출. UTIC·집계 배치는 비운다 |
 | batch_status | CODE | N | |
 | started_at | TS | N | |
 | finished_at | TS | Y | |
-| call_count | INT | N | 이번 배치 외부 호출 수 |
+| call_count | INT | N | 이번 배치의 실시간 API 호출 수. `FIXTURE`는 0 |
 | success_count | INT | N | |
 | fail_count | INT | N | |
 | quota_before | INT | Y | 배치 시작 시 당일 누적 |
@@ -735,11 +739,11 @@ FR-COL-005. 한 날짜 1행.
 | is_stopped | BOOL | N | 한도 도달 시 TRUE |
 | updated_at | TS | N | |
 
-호출 **전**에 `call_count + 예정 건수 > limit` 이면 배치를 `QUOTA_STOP`으로 남기고 외부 호출을 하지 않는다.
+호출 **전**에 `call_count + 예정 건수 > limit` 이면 배치를 `QUOTA_STOP`으로 남기고 외부 호출을 하지 않는다. `input_source = FIXTURE` 인 배치는 이 행을 증가시키지 않는다 (FR-COL-005, 수정일 2026-09-27).
 
 ### 7.12 `signal_status_raw` — 원본 수신 (불변)
 
-`/tl_drct_info` 교차로 1건 × 배치 1회 = 1행. API가 한 페이로드에 8방향 필드를 실어 주므로 **펼치지 않고 JSON으로 보존**한다.
+교차로 1건 × 배치 1회 = 1행. 원래 계획(2026-09-18)은 `/tl_drct_info` 한 건이었다. 수정 계획(수정일 2026-09-27)에서는 녹화 픽스처도 같은 항목을 이 행으로 넣는다. 어느 입력인지는 `collection_batch.input_source`가 가른다. 8방향 필드는 **펼치지 않고 JSON으로 보존**한다.
 
 | 컬럼 | 타입 | NULL | 설명 |
 |------|------|------|------|

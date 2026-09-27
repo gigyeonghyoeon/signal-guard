@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ko" data-base="../">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Signal Guard — 5주차 주간 보고</title>
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="deck.css?v=dl1" />
+</head>
+<body class="deck-page">
+  <div class="stage">
+    <header class="top">
+      <a class="brand" href="../index.html">
+        <div class="lamps" aria-hidden="true">
+          <i class="lamp red"></i><i class="lamp amber"></i><i class="lamp green"></i>
+        </div>
+        <div>
+          <strong>Signal Guard</strong>
+          <span>실시간 교통신호 상태정보 오류검지</span>
+        </div>
+      </a>
+      <div class="meta">
+        <span>5주차 주간 보고</span>
+        <a class="ghost" href="../index.html">목록</a>
+      </div>
+    </header>
+    <main id="deck"></main>
+    <footer class="bar">
+      <button class="nav-btn" id="prev" type="button">이전</button>
+      <div class="progress"><i id="bar"></i></div>
+      <div class="hint"><span id="pos">1</span> / <span id="total">0</span> · 방향키</div>
+      <button class="nav-btn" id="next" type="button">다음</button>
+    </footer>
+  </div>
+
+  <template id="slides">
+    <section class="slide slide-cover" data-title="표지">
+      <div class="slide-inner">
+        <div class="cover-title">
+          <p class="eyebrow">Week 5 · Weekly Report</p>
+          <h1>5주차 주간 보고</h1>
+          <p class="lead">설계를 화면으로 확인하고,<br />상태 데이터 수집원을 바꿉니다.</p>
+          <div class="chips"><span class="chip wait">계획 변경</span><span class="chip ok">설계 S-D2</span></div>
+          <p class="cover-team">
+            <b>조찬희</b> · <b>기경현</b><br />
+            웹 프레임워크 (조규철 교수님) · 2026.09.27
+          </p>
+        </div>
+        <div class="cover-mark">
+          <div class="name">Signal<br />Guard</div>
+          <p class="sub">WEEK 5 · WEEKLY REPORT</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="이번 주">
+      <div class="slide-inner">
+        <p class="eyebrow">This week · S-D2</p>
+        <h2>이번 주에 한 일</h2>
+        <table>
+          <thead><tr><th>산출</th><th>내용</th><th>담당</th></tr></thead>
+          <tbody>
+            <tr><td>클릭 프로토타입</td><td>대시보드·교차로·이슈·계획·통제를 클릭으로 따라간다</td><td>조찬희</td></tr>
+            <tr><td>자료흐름도</td><td>수집·검지·통제로 데이터가 어디서 들어와 어디에 쌓이는지 고정</td><td>공동</td></tr>
+            <tr><td>수집원 재검토</td><td>실시간 API로 인천 표본을 대조할 수 있는지 확인</td><td>공동</td></tr>
+          </tbody>
+        </table>
+        <p class="note" style="margin-top:16px">검지 방식은 그대로입니다. 바뀌는 것은 <strong>실측값을 어디서 가져오느냐</strong>입니다.</p>
+      </div>
+    </section>
+
+    <section class="slide" data-title="당초 계획">
+      <div class="slide-inner">
+        <p class="eyebrow">Original plan</p>
+        <h2>당초에는 실측과 계획을 대조</h2>
+        <div class="grid two">
+          <div class="card">
+            <h3 style="color:#86efac">실측값 · 실시간 신호</h3>
+            <p>공공데이터포털 실시간 API.</p>
+            <p>교차로 맵, 8방향 잔여시간, 점등상태.</p>
+            <p>전국을 호출할 수 있고, 수업 표본은 인천으로 줄였습니다.</p>
+          </div>
+          <div class="card">
+            <h3 style="color:#5b8def">기대값 · 신호 계획</h3>
+            <p>UTIC 신호 개방 데이터.</p>
+            <p>TOD, 현시 순서, 유지시간.</p>
+            <p>승인이 없으면 시드·수동 계획으로 같은 대조를 한다.</p>
+          </div>
+        </div>
+        <p class="note" style="margin-top:16px">같은 시각·같은 교차로·같은 방향에서 둘을 비교해 누락·급변·불일치를 찾습니다. 이 축은 유지합니다.</p>
+      </div>
+    </section>
+
+    <section class="slide" data-title="확인한 사실">
+      <div class="slide-inner">
+        <p class="eyebrow">What we found</p>
+        <h2>전국은 보이지만, 목표 지역은 비어 있다</h2>
+        <div class="grid three">
+          <div class="card">
+            <h3>보이는 것</h3>
+            <p>실시간 API는 전국 교차로를 돌려준다. 목록·좌표 수준에서는 응답이 있다.</p>
+          </div>
+          <div class="card">
+            <h3>비어 있는 것</h3>
+            <p>목표로 둔 인천 표본은 잔여시간·점등 같은 실시간 값이 비어 있는 교차로가 많다.</p>
+          </div>
+          <div class="card">
+            <h3>그래서 막히는 것</h3>
+            <p>빈 실측으로는 계획과 대조할 수 없고, 같은 입력으로 검지·시연을 반복할 수 없다.</p>
+          </div>
+        </div>
+        <p class="note" style="margin-top:16px">계획 쪽 UTIC 미승인과는 별개입니다. 이번에는 <strong>상태(실측) 수집원</strong>이 목표 지역을 채우지 못합니다.</p>
+      </div>
+    </section>
+
+    <section class="slide" data-title="변경">
+      <div class="slide-inner">
+        <p class="eyebrow">Decision</p>
+        <h2>수업 기준 실측은 임의 데이터</h2>
+        <table>
+          <thead><tr><th></th><th>당초</th><th>5주차 이후</th></tr></thead>
+          <tbody>
+            <tr><td>상태(실측)</td><td>실시간 API를 주기 수집</td><td>실시간과 같은 항목의 임의 데이터</td></tr>
+            <tr><td>계획(기대)</td><td>UTIC, 없으면 시드·수동</td><td>유지</td></tr>
+            <tr><td>대조</td><td>같은 시각·교차로·방향</td><td>유지</td></tr>
+            <tr><td>시연</td><td>실시간 수신을 전제</td><td>임의 데이터임을 화면에 밝힘</td></tr>
+          </tbody>
+        </table>
+        <p class="note" style="margin-top:16px">임의 데이터는 8방향, 잔여시간, 점등상태를 실시간 API와 같은 모양으로 채웁니다. 저장·정규화·검증 경로는 그대로 두고, 원본 수신은 덮어쓰지 않습니다.</p>
+      </div>
+    </section>
+
+    <section class="slide" data-title="유지">
+      <div class="slide-inner">
+        <p class="eyebrow">What stays</p>
+        <h2>바뀌지 않는 것</h2>
+        <div class="grid three">
+          <div class="card">
+            <h3>검지</h3>
+            <p>기대(계획)와 실측(상태)을 규칙으로 비교한다.</p>
+            <p>임의 값이어도 급변·불일치·누락을 심어 규칙을 검증한다.</p>
+          </div>
+          <div class="card">
+            <h3>관제 · 통제</h3>
+            <p>대시보드와 이슈로 보고, 정보·계획·현장 요청으로 닫는다.</p>
+            <p>신호기에는 명령을 보내지 않는다.</p>
+          </div>
+          <div class="card">
+            <h3>실시간 API</h3>
+            <p>요구 자체는 지우지 않는다.</p>
+            <p>목표 지역 값이 채워지면 같은 스키마로 적재한다. 수업 검증의 기준 입력만 임의 데이터다.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="프로토타입">
+      <div class="slide-inner">
+        <p class="eyebrow">Design · 클릭 프로토타입</p>
+        <h2>화면으로 확인한 흐름</h2>
+        <div class="grid three">
+          <div class="card">
+            <h3>관제</h3>
+            <p>대시보드에서 등급·이슈를 보고 교차로 상세로 들어간다.</p>
+            <p>방향별로 원본과 제공 값을 나란히 본다.</p>
+          </div>
+          <div class="card">
+            <h3>통제</h3>
+            <p>이슈 상세에서 정보 통제, 계획 수정, 현장 요청을 고른다.</p>
+            <p>운영자는 조회·코멘트만 한다.</p>
+          </div>
+          <div class="card">
+            <h3>데이터</h3>
+            <p>인천 교차로 30곳의 임의 상태로 클릭이 이어진다.</p>
+            <p>지도·통계·설정까지 같은 표본을 쓴다.</p>
+          </div>
+        </div>
+        <p class="note" style="margin-top:16px">파일은 <a href="../프로토타입/index.html" style="color:#5b8def">프로토타입/index.html</a> 입니다. 서버 없이 브라우저에서 엽니다.</p>
+      </div>
+    </section>
+
+    <section class="slide exhibit" data-title="다음">
+      <div class="slide-inner">
+        <p class="eyebrow">Next · Week 6 · S1</p>
+        <h2>다음 주 할 일</h2>
+        <table>
+          <thead><tr><th>할 일</th><th>산출</th><th>담당</th></tr></thead>
+          <tbody>
+            <tr><td>개발 환경·DB·API 기동</td><td>로그인까지 열리는 서버</td><td>기경현</td></tr>
+            <tr><td>앱 셸·로그인 화면</td><td>역할별 메뉴가 있는 빈 대시보드</td><td>조찬희</td></tr>
+            <tr><td>임의 상태·계획 시드</td><td>실시간과 같은 스키마의 기준 입력</td><td>기경현</td></tr>
+            <tr><td>검증 규칙 숫자 고정</td><td>R01–R12 임계 기본값</td><td>기경현</td></tr>
+          </tbody>
+        </table>
+        <p class="note" style="margin-top:14px">6주 데모는 관리자·운영자 로그인입니다. 수집 적재는 7주입니다.</p>
+      </div>
+    </section>
+
+    <section class="slide slide-cover" data-title="질의응답">
+      <div class="slide-inner">
+        <div class="cover-title">
+          <p class="eyebrow">Q &amp; A</p>
+          <h1>질의응답</h1>
+          <p class="lead">대조는 그대로 두고,<br />비어 있는 실측만 임의 데이터로 채웁니다.</p>
+          <p class="cover-team"><b>조찬희</b> · <b>기경현</b></p>
+        </div>
+        <div class="cover-mark">
+          <div class="name">Signal<br />Guard</div>
+        </div>
+      </div>
+    </section>
+  </template>
+
+  <script src="vendor/marked.min.js"></script>
+  <script src="docs.js?v=w5"></script>
+  <script src="deck.js"></script>
+</body>
+</html>

@@ -84,6 +84,13 @@ window.SG_DOCS = [
     image: "설계/시스템 아키텍처 구조도.png"
   },
   {
+    id: "dfd",
+    phase: "설계",
+    week: "4",
+    title: "DFD 작성 안내",
+    path: "설계/DFD작성안내.md"
+  },
+  {
     id: "ia",
     phase: "설계",
     week: "4",
@@ -106,6 +113,14 @@ window.SG_DOCS = [
     week: "4",
     title: "API 명세",
     path: "설계/API명세.md"
+  },
+  {
+    id: "proto",
+    phase: "설계",
+    week: "5",
+    title: "클릭 프로토타입",
+    path: "프로토타입/index.html",
+    type: "file"
   }
 ];
 
@@ -211,15 +226,21 @@ SG.renderDocInto = async function (el, doc) {
 
 window.SG_WEEKS = [
   {
+    week: "5주차",
+    title: "주간 보고",
+    href: "발표/5주차.html",
+    note: "이번 주"
+  },
+  {
     week: "4주차",
     title: "주간 보고",
     href: "발표/4주차.html",
-    note: "이번 주"
+    note: "지난주"
   },
   {
     week: "3주차",
     title: "주간 보고",
     href: "발표/3주차.html",
-    note: "지난주"
+    note: "분석"
   }
 ];

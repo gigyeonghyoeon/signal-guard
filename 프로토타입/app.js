@@ -320,7 +320,7 @@ function viewDash() {
     ? '<a href="#/settings">' + esc(foot) + "</a>"
     : "<span>" + esc(foot) + "</span>";
   var lead = state.data.settings.randomErrors
-    ? "무작위 오류 " + (state.data.settings.randomErrorCount || 0) + "건. 화면 갱신 주기가 끝나면 교차로와 규칙을 다시 뽑습니다."
+    ? "무작위 오류 " + (state.data.settings.randomErrorCount || 0) + "건. 고칠 수 있는 값은 자동 보정하고, 나머지는 관리자 이슈로 넘깁니다."
     : "시연 기준 2026-09-27 12:04:11 · 인천 표본 30곳. 추가 이동 없이 오류 교차로와 미처리 이슈를 고릅니다.";
   var html = pageHead("", "종합 대시보드", lead) +
     '<div class="kpis">' +
@@ -1319,6 +1319,70 @@ function calmSignal(inter, index) {
 function errorRolls() {
   return [
     {
+      id: "R12", name: "코드 정규화", severity: "INFO", auto: true,
+      apply: function (inter) {
+        var dir = pickOne(CARDINAL);
+        inter.directions[dir].Stsg = lampSlot(180, true, 18000);
+        var name = DIR_LABEL[dir] + " 직진";
+        return {
+          dir: dir, movement: name, focusMov: "Stsg",
+          text: name + " 코드값 정규화 18000cs → 180초",
+          summary: "코드값 정규화 18000cs → 180초",
+          beforeRaw: dir + "StsgRmndCs 18000",
+          beforePub: "18000 (미정규화)",
+          afterRaw: "변경 없음 (원본 불변)",
+          afterPub: "180초"
+        };
+      }
+    },
+    {
+      id: "R02", name: "잔여시간 범위", severity: "INFO", auto: true,
+      apply: function (inter) {
+        var dir = pickOne(CARDINAL);
+        inter.directions[dir].Stsg = lampSlot(30, true, 3300);
+        var name = DIR_LABEL[dir] + " 직진";
+        return {
+          dir: dir, movement: name, focusMov: "Stsg",
+          text: name + " 잔여 33초를 계획 유지 30초로 보정",
+          summary: "잔여시간 경미 이탈 보정",
+          beforeRaw: dir + "StsgRmndCs 3300",
+          beforePub: "33초",
+          afterRaw: "변경 없음 (원본 불변)",
+          afterPub: "30초"
+        };
+      }
+    },
+    {
+      id: "R08", name: "중복 수신", severity: "INFO", auto: true,
+      apply: function () {
+        return {
+          dir: "", movement: "수신 전체", focusMov: "",
+          text: "동일 시각·페이로드 중복 1건을 제거하고 최신 1건만 남김",
+          summary: "중복 수신 1건 제거",
+          beforeRaw: "동일 키 2건",
+          beforePub: "중복 2건",
+          afterRaw: "변경 없음 (원본 보존)",
+          afterPub: "1건"
+        };
+      }
+    },
+    {
+      id: "R09", name: "시각 역행", severity: "INFO", auto: true,
+      apply: function (inter) {
+        var skewed = shiftLabel(-3);
+        inter.lastReceived = shiftLabel(0);
+        return {
+          dir: "", movement: "수신 시각", focusMov: "",
+          text: "수신 시각 " + clock(skewed) + " 을 " + clock(inter.lastReceived) + " 로 정렬",
+          summary: "시각 3초 역행 정렬",
+          beforeRaw: clock(skewed),
+          beforePub: clock(skewed),
+          afterRaw: "변경 없음 (원본 보존)",
+          afterPub: clock(inter.lastReceived)
+        };
+      }
+    },
+    {
       id: "R02", name: "잔여시간 범위", severity: "WARN",
       apply: function (inter) {
         var dir = pickOne(CARDINAL);
@@ -1438,6 +1502,10 @@ function restoreScriptSignals() {
   });
   state.data.issues = seed.issues;
   state.data.comments = seed.comments;
+  state.data.logs = state.data.logs.filter(function (l) { return !l.random; });
+}
+function dropRandomLogs() {
+  state.data.logs = state.data.logs.filter(function (l) { return !l.random; });
 }
 function rollRandomErrors() {
   var want = readRandomCount();
@@ -1446,6 +1514,7 @@ function rollRandomErrors() {
     if (calmSignal(inter, index)) pool.push(inter);
   });
   state.data.issues = state.data.issues.filter(function (i) { return !ACTIVE[i.status]; });
+  dropRandomLogs();
   var order = pool.slice();
   for (var i = order.length - 1; i > 0; i--) {
     var j = Math.floor(Math.random() * (i + 1));
@@ -1454,18 +1523,47 @@ function rollRandomErrors() {
     order[j] = tmp;
   }
   var rolls = errorRolls();
+  var autos = rolls.filter(function (r) { return r.auto; });
+  var admins = rolls.filter(function (r) { return !r.auto; });
   var picked = order.slice(0, want);
   var at = nowLabel();
-  picked.forEach(function (inter, idx) {
-    var rule = pickOne(rolls);
+  var adminName = (state.users && state.users.admin && state.users.admin.name) || "관리자";
+  var autoN = 0;
+  var adminN = 0;
+  picked.forEach(function (inter) {
+    var rule = Math.random() < 0.5 ? pickOne(autos) : pickOne(admins);
     var detail = rule.apply(inter);
-    inter.severity = rule.severity;
     inter.rule = rule.id;
+    if (rule.id !== "R07" && rule.id !== "R09") inter.lastReceived = at;
+    if (rule.auto) {
+      autoN += 1;
+      inter.severity = "INFO";
+      inter.priority = 5;
+      inter.validations.unshift({ at: clock(at), rule: rule.id, severity: "INFO", text: "자동 보정 · " + detail.text });
+      state.data.logs.unshift({
+        id: "CL-RA" + pad(autoN),
+        at: at,
+        type: "AUTO_INFO",
+        actor: "시스템",
+        intersectionId: inter.id,
+        rule: rule.id,
+        issueId: "",
+        summary: detail.summary,
+        beforeRaw: detail.beforeRaw,
+        beforePub: detail.beforePub,
+        afterRaw: detail.afterRaw,
+        afterPub: detail.afterPub,
+        random: true
+      });
+      return;
+    }
+    adminN += 1;
+    inter.severity = rule.severity;
     inter.priority = rule.severity === "CRITICAL" ? 1 : rule.severity === "ERROR" ? 2 : 3;
-    if (rule.id !== "R07") inter.lastReceived = at;
     inter.validations.unshift({ at: clock(at), rule: rule.id, severity: rule.severity, text: detail.text });
+    var issueId = "ISS-R" + pad(adminN);
     state.data.issues.unshift({
-      id: "ISS-R" + pad(idx + 1),
+      id: issueId,
       intersectionId: inter.id,
       dir: detail.dir,
       movement: detail.movement,
@@ -1476,15 +1574,35 @@ function rollRandomErrors() {
       status: "OPEN",
       opened: at,
       updated: at,
-      assignee: "",
+      assignee: adminName,
       cause: detail.cause,
       snapshotRaw: detail.snapshotRaw,
       snapshotPub: detail.snapshotPub,
       fieldRequest: null,
-      history: [{ at: at, actor: "시스템", text: "이슈 등록 · OPEN" }]
+      history: [
+        { at: at, actor: "시스템", text: "이슈 등록 · OPEN" },
+        { at: at, actor: "시스템", text: "자동 보정 불가 · 관리자 " + adminName + "에게 전달" }
+      ]
     });
+    if (rule.id === "R06") {
+      state.data.logs.unshift({
+        id: "CL-RB" + pad(adminN),
+        at: at,
+        type: "PUBLISH_BLOCK",
+        actor: "시스템",
+        intersectionId: inter.id,
+        rule: "R06",
+        issueId: issueId,
+        summary: "제공 중 → 제공 중지",
+        beforeRaw: detail.snapshotRaw,
+        beforePub: detail.snapshotPub,
+        afterRaw: "변경 없음 (원본 불변)",
+        afterPub: "제공 중지",
+        random: true
+      });
+    }
   });
-  return picked.length;
+  return { total: picked.length, auto: autoN, admin: adminN };
 }
 function typing() {
   var el = document.activeElement;
@@ -1525,7 +1643,7 @@ var actions = {
     state.data.settings.randomErrors = !state.data.settings.randomErrors;
     if (state.data.settings.randomErrors) {
       var n = rollRandomErrors();
-      toast("무작위 오류 " + n + "건을 넣었습니다. 화면 갱신마다 다시 뽑습니다.");
+      toast("자동 보정 " + n.auto + "건, 관리자 전달 " + n.admin + "건입니다. 화면 갱신마다 다시 뽑습니다.");
     } else {
       restoreScriptSignals();
       toast("시연에 넣어 둔 오류로 되돌렸습니다.");

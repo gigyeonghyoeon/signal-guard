@@ -56,17 +56,17 @@ h1, h2, p { margin: 0; }
   font-size: 12px;
 }
 .proto-btn.on, .seg-mini button.on { background: #e8eef6; color: #152033; border-color: #e8eef6; }
-.proto-count { display: inline-flex; align-items: center; gap: 6px; color: #d5deea; }
-.proto-count input {
+.seg-mini { display: inline-flex; gap: 4px; }
+.rand-chip input {
   width: 52px;
-  background: #0f1724;
-  color: #fff;
-  border: 1px solid #3d4d63;
+  background: #fff;
+  color: var(--text);
+  border: 1px solid var(--line);
   border-radius: 6px;
   padding: 2px 6px;
   font-size: 12px;
 }
-.seg-mini { display: inline-flex; gap: 4px; }
+.rand-chip .btn { padding: 3px 8px; font-size: 12px; }
 
 .app {
   height: 100vh;

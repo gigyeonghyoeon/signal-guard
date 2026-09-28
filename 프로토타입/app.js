@@ -217,13 +217,8 @@ function protoBar(screen) {
       '<button type="button" class="proto-btn' + (state.user.role === "ADMIN" ? " on" : "") + '" data-act="role" data-role="ADMIN">관리자</button>' +
       "</span>";
   }
-  var rc = state.data && state.data.settings ? state.data.settings.randomErrorCount : 6;
-  if (rc == null) rc = 6;
-  var rolling = state.data && state.data.settings && state.data.settings.randomErrors;
   return '<div class="proto"><span>프로토타입 · WBS-3.7</span><b class="sid">' + esc(screen) + '</b><span class="spacer"></span>' +
     role +
-    '<label class="proto-count">오류 <input id="rand-count" type="number" min="0" max="24" value="' + esc(rc) + '" aria-label="무작위 오류 수"></label>' +
-    '<button type="button" class="proto-btn' + (rolling ? " on" : "") + '" data-act="toggle-random">' + (rolling ? "무작위 켜짐" : "무작위 오류") + "</button>" +
     '<button type="button" class="proto-btn" data-act="reset-demo">시연 초기화</button>' +
     '<a href="../index.html">산출물 목록</a></div>';
 }
@@ -239,10 +234,14 @@ function headerBar() {
   var est = state.data.intersections.some(function (i) { return i.estimated; });
   var estChip = est ? '<a class="chip" href="#/intersections/284101"><em>추정</em></a>' : "";
   var n = activeIssues().length;
+  var rc = q.randomErrorCount == null ? 6 : q.randomErrorCount;
+  var rolling = !!q.randomErrors;
+  var rand = '<span class="chip rand-chip"><em>오류</em><input id="rand-count" type="number" min="0" max="24" value="' + esc(rc) + '" aria-label="무작위 오류 수">' +
+    '<button type="button" class="btn' + (rolling ? "" : " primary") + '" data-act="toggle-random">' + (rolling ? "무작위 끄기" : "무작위 오류") + "</button></span>";
   var banner = ratio >= 1 ? '<div class="banner bad" style="flex-basis:100%">오늘 수집 한도에 도달했습니다. 당일 수집이 멈춰 있습니다.</div>' : "";
   return '<header class="topbar">' + banner + '<a class="brand" href="#/dashboard"><span class="lamps" aria-hidden="true"><i class="r"></i><i class="a"></i><i class="g"></i></span><span class="brand-text"><strong>Signal Guard</strong><span>실시간 교통신호 오류검지</span></span></a>' +
     '<div class="top-status"><span class="chip"><em>마지막 수신</em> <strong class="num">' + esc(clock(latestReceive())) + '</strong></span>' +
-    '<span class="chip" data-live="poll">' + esc(pollLabel()) + "</span>" + estChip + quota + "</div>" +
+    '<span class="chip" data-live="poll">' + esc(pollLabel()) + "</span>" + estChip + quota + rand + "</div>" +
     '<div class="top-user"><a class="chip" href="#/issues?status=active"><em>이슈</em> <strong class="num">' + n + '</strong></a>' +
     '<div class="who"><span>' + esc(roleLabel(state.user.role)) + '</span><b>' + esc(state.user.name) + '</b></div></div></header>';
 }

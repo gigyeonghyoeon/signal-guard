@@ -95,8 +95,7 @@ window.SG_DOCS = [
     phase: "설계",
     week: "4",
     title: "화면 IA 설계서",
-    path: "설계/화면IA.md",
-    hidden: true
+    path: "설계/화면IA.md"
   },
   {
     id: "erd",
@@ -104,8 +103,7 @@ window.SG_DOCS = [
     week: "4",
     title: "ERD",
     path: "설계/ERD.md",
-    image: "설계/논리ERD.jpg",
-    hidden: true
+    image: "설계/논리ERD.jpg"
   },
   {
     id: "api",

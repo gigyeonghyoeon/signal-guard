@@ -3,7 +3,7 @@ var state = {
   user: null,
   data: null,
   users: null,
-  path: "/login",
+  path: "/dashboard",
   query: {},
   bootedAt: Date.now(),
   pollAgo: 4,
@@ -11,7 +11,6 @@ var state = {
   modal: null,
   pending: null,
   formError: "",
-  loginError: "",
   errPath: ""
 };
 
@@ -122,7 +121,7 @@ function go(href) {
   else location.hash = next;
 }
 function parseHash() {
-  var raw = (location.hash || "#/login").replace(/^#/, "") || "/login";
+  var raw = (location.hash || "#/dashboard").replace(/^#/, "") || "/dashboard";
   var parts = raw.split("?");
   var path = parts[0].charAt(0) === "/" ? parts[0] : "/" + parts[0];
   var query = {};
@@ -178,7 +177,6 @@ function table(headers, body) {
 }
 
 function screenOf(path) {
-  if (path === "/login") return "SCR-LOGIN";
   if (path === "/dashboard") return "SCR-DASH";
   if (path === "/map") return "SCR-MAP";
   if (path === "/intersections") return "SCR-INT-LIST";
@@ -241,8 +239,7 @@ function headerBar() {
     '<div class="top-status"><span class="chip"><em>마지막 수신</em> <strong class="num">' + esc(clock(latestReceive())) + '</strong></span>' +
     '<span class="chip" data-live="poll">' + esc(pollLabel()) + "</span>" + estChip + quota + "</div>" +
     '<div class="top-user"><a class="chip" href="#/issues?status=active"><em>이슈</em> <strong class="num">' + n + '</strong></a>' +
-    '<div class="who"><span>' + esc(roleLabel(state.user.role)) + '</span><b>' + esc(state.user.name) + '</b></div>' +
-    '<button type="button" class="btn" data-act="logout">로그아웃</button></div></header>';
+    '<div class="who"><span>' + esc(roleLabel(state.user.role)) + '</span><b>' + esc(state.user.name) + '</b></div></div></header>';
 }
 
 function pollLabel() {
@@ -925,18 +922,6 @@ function settingsAccounts() {
     '<div class="btn-row"><button class="btn primary" type="submit">계정 등록</button></div></form>';
 }
 
-function viewLogin() {
-  var err = state.loginError ? '<p class="form-error" role="alert">' + esc(state.loginError) + "</p>" : "";
-  return protoBar("SCR-LOGIN") + '<div class="login-center"><div class="login-card"><div class="brand"><span class="lamps" aria-hidden="true"><i class="r"></i><i class="a"></i><i class="g"></i></span><span><strong>Signal Guard</strong><span>실시간 교통신호 상태정보 오류검지</span></span></div>' +
-    "<h1>로그인</h1>" +
-    '<form id="login-form" class="login-form" data-act="login"><label class="field">아이디<input name="id" autocomplete="username" required></label>' +
-    '<label class="field">비밀번호<input name="password" type="password" autocomplete="current-password" required></label>' +
-    err + '<button class="btn primary" type="submit">로그인</button></form>' +
-    '<div class="demo-box"><p>시연 계정. 비밀번호는 둘 다 demo 입니다. 실패 문구는 아이디와 비밀번호를 구분하지 않습니다.</p>' +
-    '<div class="btn-row"><button type="button" class="btn" data-act="quick-login" data-id="operator">운영자 입장</button>' +
-    '<button type="button" class="btn" data-act="quick-login" data-id="admin">관리자 입장</button></div></div></div></div>';
-}
-
 function mapInters() {
   var q = state.query.severity || "";
   return state.data.intersections.filter(function (i) {
@@ -1116,19 +1101,20 @@ function viewFor(path) {
   return null;
 }
 
+function ensureUser() {
+  if (state.user && state.users && state.users[state.user.loginId]) return;
+  var u = state.users.admin || state.users[Object.keys(state.users)[0]];
+  state.user = { loginId: u.loginId, name: u.name, role: u.role };
+}
+
 function render() {
   var parsed = parseHash();
-  state.path = parsed.path;
+  state.path = parsed.path === "/login" ? "/dashboard" : parsed.path;
   state.query = parsed.query;
   var app = document.getElementById("app");
   destroyMap();
-  if (state.user && !state.users[state.user.loginId]) state.user = null;
-  if (!state.user) {
-    if (state.path !== "/login") { location.replace("#/login"); return; }
-    app.innerHTML = '<div class="login-page">' + viewLogin() + "</div>";
-    return;
-  }
-  if (state.path === "/login") { location.replace("#/dashboard"); return; }
+  ensureUser();
+  if (parsed.path === "/login") { location.replace("#/dashboard"); return; }
   var view = viewFor(state.path);
   if (!view) { location.replace("#/dashboard"); return; }
   if (state.path !== state.errPath) {
@@ -1157,19 +1143,6 @@ function addLog(entry) {
   entry.id = "CL-" + Date.now();
   state.data.logs.unshift(entry);
 }
-function loginAs(id, password) {
-  var u = state.users[id];
-  if (!u || !u.active || (password != null && u.password !== password)) {
-    state.loginError = "아이디 또는 비밀번호가 올바르지 않습니다.";
-    render();
-    return;
-  }
-  state.user = { loginId: u.loginId, name: u.name, role: u.role };
-  state.loginError = "";
-  persist();
-  go("/dashboard");
-}
-
 function doInfo() {
   state.formError = "";
   var p = state.pending;
@@ -1287,13 +1260,9 @@ function doUnwatch() {
 }
 
 var actions = {
-  logout: function () {
-    state.user = null;
-    persist();
-    go("/login");
-  },
   "reset-demo": function () {
     var id = state.user && state.user.loginId;
+    var role = state.user && state.user.role;
     state.data = SGData.createSeed();
     state.users = SGData.defaultUsers();
     state.ui = { dir: {}, diagonal: false, logOpen: {}, controlMode: {} };
@@ -1302,10 +1271,13 @@ var actions = {
     if (id && state.users[id]) {
       var u = state.users[id];
       state.user = { loginId: u.loginId, name: u.name, role: u.role };
-    } else state.user = null;
+    } else if (role === "OPERATOR" && state.users.operator) {
+      var op = state.users.operator;
+      state.user = { loginId: op.loginId, name: op.name, role: op.role };
+    } else ensureUser();
     persist();
     toast("시연 데이터를 처음 상태로 되돌렸습니다.");
-    go(state.user ? "/dashboard" : "/login");
+    go("/dashboard");
   },
   role: function (el) {
     var role = el.getAttribute("data-role");
@@ -1315,11 +1287,6 @@ var actions = {
     persist();
     if (!isAdmin() && (state.path.indexOf("/settings") === 0 || state.path === "/plans/mapping")) go("/dashboard");
     else render();
-  },
-  "quick-login": function (el) { loginAs(el.getAttribute("data-id"), null); },
-  login: function (form) {
-    var data = Object.fromEntries(new FormData(form).entries());
-    loginAs(String(data.id || "").trim(), String(data.password || ""));
   },
   "select-dir": function (el) {
     state.ui.dir[el.getAttribute("data-id")] = el.getAttribute("data-dir");
@@ -1625,11 +1592,6 @@ function onChange(e) {
   }
 }
 function onInput(e) {
-  if (e.target.closest && e.target.closest("#login-form") && state.loginError) {
-    state.loginError = "";
-    var node = document.querySelector(".form-error");
-    if (node) node.remove();
-  }
   if (e.target.id !== "collect-min") return;
   var el = document.querySelector("[data-live-forecast]");
   if (!el) return;
@@ -1684,6 +1646,7 @@ function hydrate() {
     if (saved.users) state.users = saved.users;
     if (saved.user) state.user = saved.user;
   } catch (err) { /* 저장된 시연 상태가 깨지면 시드로 시작한다 */ }
+  ensureUser();
   applyCoords(state.data);
 }
 
@@ -1711,7 +1674,7 @@ function init() {
     if (state.path.indexOf("/issues") === 0) render();
   });
   setInterval(tick, 1000);
-  if (!location.hash) location.hash = state.user ? "#/dashboard" : "#/login";
+  if (!location.hash || location.hash === "#/login") location.hash = "#/dashboard";
   else render();
 }
 

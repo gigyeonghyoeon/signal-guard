@@ -217,8 +217,13 @@ function protoBar(screen) {
       '<button type="button" class="proto-btn' + (state.user.role === "ADMIN" ? " on" : "") + '" data-act="role" data-role="ADMIN">관리자</button>' +
       "</span>";
   }
+  var rc = state.data && state.data.settings ? state.data.settings.randomErrorCount : 6;
+  if (rc == null) rc = 6;
+  var rolling = state.data && state.data.settings && state.data.settings.randomErrors;
   return '<div class="proto"><span>프로토타입 · WBS-3.7</span><b class="sid">' + esc(screen) + '</b><span class="spacer"></span>' +
     role +
+    '<label class="proto-count">오류 <input id="rand-count" type="number" min="0" max="24" value="' + esc(rc) + '" aria-label="무작위 오류 수"></label>' +
+    '<button type="button" class="proto-btn' + (rolling ? " on" : "") + '" data-act="toggle-random">' + (rolling ? "무작위 켜짐" : "무작위 오류") + "</button>" +
     '<button type="button" class="proto-btn" data-act="reset-demo">시연 초기화</button>' +
     '<a href="../index.html">산출물 목록</a></div>';
 }
@@ -315,7 +320,10 @@ function viewDash() {
   var footHtml = isAdmin()
     ? '<a href="#/settings">' + esc(foot) + "</a>"
     : "<span>" + esc(foot) + "</span>";
-  var html = pageHead("", "종합 대시보드", "시연 기준 2026-09-27 12:04:11 · 인천 표본 30곳. 추가 이동 없이 오류 교차로와 미처리 이슈를 고릅니다.") +
+  var lead = state.data.settings.randomErrors
+    ? "무작위 오류 " + (state.data.settings.randomErrorCount || 0) + "건. 화면 갱신 주기가 끝나면 교차로와 규칙을 다시 뽑습니다."
+    : "시연 기준 2026-09-27 12:04:11 · 인천 표본 30곳. 추가 이동 없이 오류 교차로와 미처리 이슈를 고릅니다.";
+  var html = pageHead("", "종합 대시보드", lead) +
     '<div class="kpis">' +
     kpi("#/intersections", "전체", c.all) +
     kpi("#/intersections?severity=OK", "정상", c.OK || 0) +
@@ -418,7 +426,7 @@ function estimateCaption(inter) {
 }
 function dirButton(inter, id, selected) {
   var d = inter.directions[id];
-  var conflict = id === "nt" && d.Stsg.pubSt === "진행" && d.Pdsg.pubSt === "진행" && d.Stsg.rawSt.indexOf("protected") === 0 && d.Pdsg.rawSt.indexOf("protected") === 0;
+  var conflict = d.Stsg.pubSt === "진행" && d.Pdsg.pubSt === "진행" && d.Stsg.rawSt.indexOf("protected") === 0 && d.Pdsg.rawSt.indexOf("protected") === 0;
   var movs = ["Stsg", "Ltsg", "Pdsg"].map(function (mov) {
     var slot = d[mov];
     var sec = shownSec(inter, id, mov);
@@ -1259,6 +1267,232 @@ function doUnwatch() {
   render();
 }
 
+function lampSlot(sec, go, rawCs) {
+  return {
+    rawCs: rawCs == null ? sec * 100 : rawCs,
+    pubSec: sec,
+    rawSt: go ? "protected-Movement-Allowed" : "stop-And-Remain",
+    pubSt: go ? "진행" : "정지"
+  };
+}
+function plainDirs(mode) {
+  var ids = ["nt", "et", "st", "wt", "ne", "se", "sw", "nw"];
+  var dirs = {};
+  ids.forEach(function (id) {
+    var diag = id === "ne" || id === "se" || id === "sw" || id === "nw";
+    var ns = id === "nt" || id === "st";
+    var ew = id === "et" || id === "wt";
+    var green = !diag && ((mode === "ns" && ns) || (mode === "ew" && ew));
+    dirs[id] = {
+      Stsg: lampSlot(diag ? 0 : green ? 28 : 6, green),
+      Ltsg: lampSlot(0, false),
+      Pdsg: lampSlot(diag ? 0 : 8, false)
+    };
+  });
+  return dirs;
+}
+function pickOne(list) {
+  return list[Math.floor(Math.random() * list.length)];
+}
+function shiftLabel(deltaSec) {
+  var add = Math.floor((Date.now() - state.bootedAt) / 1000) + deltaSec;
+  var base = 12 * 3600 + 4 * 60 + 11 + add;
+  if (base < 0) base = 0;
+  return "2026-09-27 " + pad(Math.floor(base / 3600) % 24) + ":" + pad(Math.floor(base / 60) % 60) + ":" + pad(base % 60);
+}
+function calmSignal(inter, index) {
+  if (inter.failCode || watchOn(inter)) return false;
+  inter.severity = "OK";
+  inter.rule = "";
+  inter.blocked = false;
+  inter.estimated = false;
+  inter.priority = 5;
+  inter.directions = plainDirs(index % 2 === 0 ? "ns" : "ew");
+  inter.lastReceived = "2026-09-27 12:04:0" + (index % 6);
+  inter.validations = [{
+    at: "12:04:05",
+    rule: "",
+    severity: "OK",
+    text: inter.mapped === "미매핑" ? "계획 대조 생략 · 미매핑" : "계획 대조 통과"
+  }];
+  return true;
+}
+function errorRolls() {
+  return [
+    {
+      id: "R02", name: "잔여시간 범위", severity: "WARN",
+      apply: function (inter) {
+        var dir = pickOne(CARDINAL);
+        inter.directions[dir].Stsg = lampSlot(48, true, 4800);
+        var name = DIR_LABEL[dir] + " 직진";
+        return {
+          dir: dir, movement: name, focusMov: "Stsg",
+          text: name + " 잔여 48초. 계획 유지 30초 + 여유 5초를 넘음",
+          cause: "직진 잔여가 계획 유지시간에 여유를 더한 값을 넘었습니다.",
+          snapshotRaw: dir + "StsgRmndCs 4800 (48.00초) protected-Movement-Allowed",
+          snapshotPub: name + " 48초 진행"
+        };
+      }
+    },
+    {
+      id: "R03", name: "잔여시간 역증가", severity: "ERROR",
+      apply: function (inter) {
+        var dir = pickOne(CARDINAL);
+        inter.directions[dir].Stsg = lampSlot(18, true, 6100);
+        var name = DIR_LABEL[dir] + " 직진";
+        return {
+          dir: dir, movement: name, focusMov: "Stsg",
+          text: name + " 잔여시간이 수집 간격보다 커짐 (18초 → 61초)",
+          cause: "수집 간격보다 잔여시간이 커졌고, 계획상 현시 전환 시각이 아닙니다.",
+          snapshotRaw: dir + "StsgRmndCs 6100 (61.00초) protected-Movement-Allowed",
+          snapshotPub: name + " 18초 진행"
+        };
+      }
+    },
+    {
+      id: "R04", name: "잔여시간 급감", severity: "WARN",
+      apply: function (inter) {
+        var dir = pickOne(CARDINAL);
+        inter.directions[dir].Stsg = lampSlot(2, true, 200);
+        var name = DIR_LABEL[dir] + " 직진";
+        return {
+          dir: dir, movement: name, focusMov: "Stsg",
+          text: name + " 잔여 40초에서 2초로 급감. 계획 전환으로 설명 불가",
+          cause: "잔여시간이 타이머로 설명되지 않을 만큼 줄었습니다.",
+          snapshotRaw: dir + "StsgRmndCs 200 (2.00초) protected-Movement-Allowed",
+          snapshotPub: name + " 2초 진행"
+        };
+      }
+    },
+    {
+      id: "R06", name: "충돌 현시 동시 녹색", severity: "CRITICAL",
+      apply: function (inter) {
+        var dir = pickOne(CARDINAL);
+        inter.directions[dir].Stsg = lampSlot(28, true, 2800);
+        inter.directions[dir].Pdsg = lampSlot(14, true, 1400);
+        inter.blocked = true;
+        var name = DIR_LABEL[dir];
+        return {
+          dir: dir, movement: name + " 직진 vs 보행", focusMov: "Pdsg",
+          text: name + " 직진과 " + name + " 보행이 동시에 진행",
+          cause: name + " 직진과 " + name + " 보행이 동시에 진행입니다. 제공 값을 바꿔도 현장 등화는 바뀌지 않습니다.",
+          snapshotRaw: dir + "StsgRmndCs 2800 (28.00초) protected-Movement-Allowed / " + dir + "PdsgRmndCs 1400 (14.00초) protected-Movement-Allowed",
+          snapshotPub: name + " 직진 28초 진행 / " + name + " 보행 14초 진행"
+        };
+      }
+    },
+    {
+      id: "R07", name: "수신 지연", severity: "WARN",
+      apply: function (inter) {
+        inter.lastReceived = shiftLabel(-12 * 60);
+        return {
+          dir: "", movement: "수신 전체", focusMov: "",
+          text: "수신 지연. 마지막 성공 수신 이후 약 12분",
+          cause: "마지막 성공 수신이 수집 주기와 WARN 임계(30초)를 크게 넘겼습니다. 값은 마지막 수신분을 유지합니다.",
+          snapshotRaw: "마지막 성공 수신 " + clock(inter.lastReceived),
+          snapshotPub: "제공 값은 " + clock(inter.lastReceived) + " 수신분"
+        };
+      }
+    },
+    {
+      id: "R11", name: "점등·잔여 불일치", severity: "ERROR",
+      apply: function (inter) {
+        var dir = pickOne(CARDINAL);
+        var slot = lampSlot(22, false, 2200);
+        slot.pubSt = "진행";
+        inter.directions[dir].Stsg = slot;
+        var name = DIR_LABEL[dir] + " 직진";
+        return {
+          dir: dir, movement: name, focusMov: "Stsg",
+          text: name + " 점등은 정지인데 잔여시간이 진행 구간",
+          cause: "점등은 정지인데 잔여시간이 진행 구간에 해당했습니다.",
+          snapshotRaw: dir + "StsgRmndCs 2200 (22.00초) stop-And-Remain",
+          snapshotPub: name + " 22초 진행"
+        };
+      }
+    }
+  ];
+}
+function readRandomCount() {
+  var input = document.getElementById("rand-count");
+  var n = input ? Number(input.value) : Number(state.data.settings.randomErrorCount);
+  if (!(n >= 0)) n = 0;
+  n = Math.min(24, Math.floor(n));
+  state.data.settings.randomErrorCount = n;
+  return n;
+}
+function restoreScriptSignals() {
+  var seed = SGData.createSeed();
+  var by = {};
+  seed.intersections.forEach(function (i) { by[i.id] = i; });
+  state.data.intersections.forEach(function (inter) {
+    var s = by[inter.id];
+    if (!s) return;
+    inter.severity = s.severity;
+    inter.rule = s.rule;
+    inter.blocked = s.blocked;
+    inter.estimated = s.estimated;
+    inter.priority = s.priority;
+    inter.directions = s.directions;
+    inter.lastReceived = s.lastReceived;
+    inter.validations = s.validations;
+  });
+  state.data.issues = seed.issues;
+  state.data.comments = seed.comments;
+}
+function rollRandomErrors() {
+  var want = readRandomCount();
+  var pool = [];
+  state.data.intersections.forEach(function (inter, index) {
+    if (calmSignal(inter, index)) pool.push(inter);
+  });
+  state.data.issues = state.data.issues.filter(function (i) { return !ACTIVE[i.status]; });
+  var order = pool.slice();
+  for (var i = order.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = order[i];
+    order[i] = order[j];
+    order[j] = tmp;
+  }
+  var rolls = errorRolls();
+  var picked = order.slice(0, want);
+  var at = nowLabel();
+  picked.forEach(function (inter, idx) {
+    var rule = pickOne(rolls);
+    var detail = rule.apply(inter);
+    inter.severity = rule.severity;
+    inter.rule = rule.id;
+    inter.priority = rule.severity === "CRITICAL" ? 1 : rule.severity === "ERROR" ? 2 : 3;
+    if (rule.id !== "R07") inter.lastReceived = at;
+    inter.validations.unshift({ at: clock(at), rule: rule.id, severity: rule.severity, text: detail.text });
+    state.data.issues.unshift({
+      id: "ISS-R" + pad(idx + 1),
+      intersectionId: inter.id,
+      dir: detail.dir,
+      movement: detail.movement,
+      focusMov: detail.focusMov,
+      rule: rule.id,
+      ruleName: rule.name,
+      severity: rule.severity,
+      status: "OPEN",
+      opened: at,
+      updated: at,
+      assignee: "",
+      cause: detail.cause,
+      snapshotRaw: detail.snapshotRaw,
+      snapshotPub: detail.snapshotPub,
+      fieldRequest: null,
+      history: [{ at: at, actor: "시스템", text: "이슈 등록 · OPEN" }]
+    });
+  });
+  return picked.length;
+}
+function typing() {
+  var el = document.activeElement;
+  if (!el || !el.tagName) return false;
+  return el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.tagName === "SELECT";
+}
+
 var actions = {
   "reset-demo": function () {
     var id = state.user && state.user.loginId;
@@ -1278,6 +1512,27 @@ var actions = {
     persist();
     toast("시연 데이터를 처음 상태로 되돌렸습니다.");
     go("/dashboard");
+  },
+  "set-random-count": function () {
+    readRandomCount();
+    if (state.data.settings.randomErrors) {
+      rollRandomErrors();
+      persist();
+      render();
+    }
+  },
+  "toggle-random": function () {
+    readRandomCount();
+    state.data.settings.randomErrors = !state.data.settings.randomErrors;
+    if (state.data.settings.randomErrors) {
+      var n = rollRandomErrors();
+      toast("무작위 오류 " + n + "건을 넣었습니다. 화면 갱신마다 다시 뽑습니다.");
+    } else {
+      restoreScriptSignals();
+      toast("시연에 넣어 둔 오류로 되돌렸습니다.");
+    }
+    persist();
+    render();
   },
   role: function (el) {
     var role = el.getAttribute("data-role");
@@ -1582,6 +1837,10 @@ function onSubmit(e) {
 }
 function onChange(e) {
   var t = e.target;
+  if (t.id === "rand-count") {
+    actions["set-random-count"](t);
+    return;
+  }
   if (t.getAttribute && t.getAttribute("data-act") && actions[t.getAttribute("data-act")]) {
     actions[t.getAttribute("data-act")](t);
     return;
@@ -1611,6 +1870,12 @@ function tick() {
   if (state.pollAgo >= period) {
     state.pollAgo = 0;
     label = "갱신 중";
+    if (state.data.settings.randomErrors && !state.modal && !typing()) {
+      rollRandomErrors();
+      persist();
+      render();
+      return;
+    }
   } else label = "갱신 " + state.pollAgo + "초 전";
   var poll = document.querySelector('[data-live="poll"]');
   if (poll) poll.textContent = label;

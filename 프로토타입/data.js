@@ -509,7 +509,9 @@ var SGData = (function () {
         collectMin: 15,
         mapHours: 24,
         quotaUsed: 2880,
-        quotaLimit: 5000
+        quotaLimit: 5000,
+        randomErrors: false,
+        randomErrorCount: 6
       },
       intersections: intersections,
       issues: issues,

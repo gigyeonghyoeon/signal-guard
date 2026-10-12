@@ -224,16 +224,22 @@ SG.renderDocInto = async function (el, doc) {
 
 window.SG_WEEKS = [
   {
+    week: "7주차",
+    title: "주간 보고",
+    href: "발표/7주차.html",
+    note: "이번 주"
+  },
+  {
     week: "5주차",
     title: "주간 보고",
     href: "발표/5주차.html",
-    note: "이번 주"
+    note: "설계"
   },
   {
     week: "4주차",
     title: "주간 보고",
     href: "발표/4주차.html",
-    note: "지난주"
+    note: "설계"
   },
   {
     week: "3주차",

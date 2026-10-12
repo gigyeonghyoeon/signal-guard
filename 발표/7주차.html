@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ko" data-base="../">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Signal Guard — 7주차 주간 보고</title>
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="deck.css?v=dl1" />
+</head>
+<body class="deck-page">
+  <div class="stage">
+    <header class="top">
+      <a class="brand" href="../index.html">
+        <div class="lamps" aria-hidden="true">
+          <i class="lamp red"></i><i class="lamp amber"></i><i class="lamp green"></i>
+        </div>
+        <div>
+          <strong>Signal Guard</strong>
+          <span>실시간 교통신호 상태정보 오류검지</span>
+        </div>
+      </a>
+      <div class="meta">
+        <span>7주차 주간 보고</span>
+        <a class="ghost" href="../index.html">목록</a>
+      </div>
+    </header>
+    <main id="deck"></main>
+    <footer class="bar">
+      <button class="nav-btn" id="prev" type="button">이전</button>
+      <div class="progress"><i id="bar"></i></div>
+      <div class="hint"><span id="pos">1</span> / <span id="total">0</span> · 방향키</div>
+      <button class="nav-btn" id="next" type="button">다음</button>
+    </footer>
+  </div>
+
+  <template id="slides">
+    <section class="slide slide-cover" data-title="표지">
+      <div class="slide-inner">
+        <div class="cover-title">
+          <p class="eyebrow">Week 7 · Weekly Report</p>
+          <h1>7주차 주간 보고</h1>
+          <p class="lead">오류 상황과 처리 방법을<br />문서로 적었습니다.</p>
+          <p class="cover-team">
+            <b>조찬희</b> · <b>기경현</b><br />
+            웹 프레임워크 (조규철 교수님) · 2026.10.12
+          </p>
+        </div>
+        <div class="cover-mark">
+          <div class="name">Signal<br />Guard</div>
+          <p class="sub">WEEK 7 · WEEKLY REPORT</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="이번 주">
+      <div class="slide-inner">
+        <p class="eyebrow">This week · S2</p>
+        <h2>이번주</h2>
+        <table>
+          <thead><tr><th>적은 것</th><th>내용</th></tr></thead>
+          <tbody>
+            <tr><td>오류 상황</td><td>신호 데이터에서 일어날 수 있는 상황을 ID로 나누어 적음</td></tr>
+            <tr><td>처리 방법</td><td>상황마다 오류 처리 방법을 적음</td></tr>
+            <tr><td>계획 데이터 수집</td><td>계획 데이터를 로컬 데이터베이스에 저장</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="slide" data-title="임의 데이터">
+      <div class="slide-inner">
+        <p class="eyebrow">Week 5 decision</p>
+        <h2>5주차 변경사항</h2>
+        <table>
+          <thead><tr><th>항목</th><th>내용</th></tr></thead>
+          <tbody>
+            <tr><td>실시간 신호 데이터에서 임의의 데이터로 바꾼 이유</td><td>실시간 API는 전국 데이터로 보이지만 빈 항목이 많습니다. 목표 지역의 실측으로 계획과 대조하기 어렵습니다.</td></tr>
+            <tr><td>5주차 결정</td><td>임의의 오류 데이터를 생성해 대시보드에 표시</td></tr>
+            <tr><td>임의의 데이터를 넣는 방법</td><td>정상 신호를 먼저 두고, 그 위에 정한 오류를 넣습니다. 어떤 상황을 넣었는지는 ID로 남깁니다.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="slide" data-title="오류 종류">
+      <div class="slide-inner">
+        <p class="eyebrow">Error kinds</p>
+        <h2>오류 발생 상황 분류</h2>
+        <table>
+          <thead><tr><th>구분</th><th>이런 상황</th></tr></thead>
+          <tbody>
+            <tr><td>A 수집·수신</td><td>타임아웃, 빈 응답, 중복 수신</td></tr>
+            <tr><td>B 값·형식</td><td>별칭, 결측, 단위가 섞임</td></tr>
+            <tr><td>C 시계열</td><td>잔여시간 급증·급감, 같은 값이 반복</td></tr>
+            <tr><td>D 현시 논리</td><td>황색 생략, 교차 방향의 동시 녹색</td></tr>
+            <tr><td>E 계획 대조</td><td>계획과 불일치, 교차로 매핑 오류</td></tr>
+            <tr><td>F 통제·운영</td><td>같은 보정이 반복, 권한 없는 수정</td></tr>
+            <tr><td>G 연쇄</td><td>여러 교차로가 같은 시각에 이상</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="slide" data-title="작성 방법">
+      <div class="slide-inner">
+        <p class="eyebrow">Table row · S-D02</p>
+        <h2>문서 작성 방법</h2>
+        <table>
+          <thead><tr><th>ID</th><th>상황</th><th>판정</th><th>처리</th><th>검증</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>S-D02(예시)</td>
+              <td>북쪽과 동쪽 직진이 동시에 녹색</td>
+              <td>R06 CRITICAL</td>
+              <td>제공을 중지. 계획은 어긋난 방향 기록. 맞으면 제공을 복귀</td>
+              <td>동시 녹색을 넣어 확인</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="grid five" style="margin-top:16px">
+          <div class="card"><h3>ID</h3><p>상황을 구분하는 번호입니다. 수집은 A, 값은 B처럼 문자와 번호를 붙입니다.</p></div>
+          <div class="card"><h3>상황</h3><p>그때 들어온 입력이 어떤 모습인지입니다.</p></div>
+          <div class="card"><h3>판정</h3><p>어떤 규칙으로 보고, 등급은 무엇인지입니다.</p></div>
+          <div class="card"><h3>처리</h3><p>시스템이 원본과 제공 값에 무엇을 하는지입니다.</p></div>
+          <div class="card"><h3>검증</h3><p>그 결과가 맞는지 어떤 데이터로 확인하는지입니다.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="예시">
+      <div class="slide-inner">
+        <p class="eyebrow">Example · S-D02</p>
+        <h2>오류 상황 예시</h2>
+        <div class="grid three">
+          <div class="card">
+            <h3>상황</h3>
+            <p>북쪽 직진과 동쪽 직진이 동시에 녹색입니다. 가운데에서 진행이 겹칩니다.</p>
+          </div>
+          <div class="card">
+            <h3>판정</h3>
+            <p>R06 CRITICAL. 한 번 관측되면 바로 이슈로 올립니다.</p>
+          </div>
+          <div class="card">
+            <h3>처리</h3>
+            <p>교차 방향의 제공을 중지합니다. 계획으로 어긋난 방향을 이슈에 적습니다. 세 주기 연속 맞으면 제공을 되돌립니다.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="자동 보정">
+      <div class="slide-inner">
+        <p class="eyebrow">Can be corrected</p>
+        <h2>자동 보정 가능 상황</h2>
+        <table>
+          <thead><tr><th>상황</th><th>처리</th></tr></thead>
+          <tbody>
+            <tr><td>점등상태가 G, green</td><td>제공값만 표준 코드로 바꿈. 원본은 유지하고 로그만 남김</td></tr>
+            <tr><td>같은 내용이 두 번</td><td>원본은 두고 제공값만 하나로 둠</td></tr>
+            <tr><td>잔여가 계획 길이를 조금 넘음</td><td>조금 넘으면 제공값만 상한으로 맞춤. 많이 넘으면 제공하지 않고 이슈에 계획 길이를 적음</td></tr>
+            <tr><td>한 주기만 잔여가 비어 있음</td><td>직전과 계획이 같은 현시면 1초만 채움. 다르거나 연속이면 채우지 않고 이슈</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="slide" data-title="이슈">
+      <div class="slide-inner">
+        <p class="eyebrow">Cannot be corrected</p>
+        <h2>자동 보정 불가 상황</h2>
+        <table>
+          <thead><tr><th>상황</th><th>처리</th></tr></thead>
+          <tbody>
+            <tr><td>사전에 없는 코드, 단위 불명</td><td>추정하지 않고 계획값도 넣지 않음. 그 방향의 제공을 잠시 막음</td></tr>
+            <tr><td>같은 녹색인데 잔여만 급증</td><td>그 숫자는 제공하지 않고 확인 중. 계획 잔여로 채우지 않음. 세 주기 맞으면 복귀</td></tr>
+            <tr><td>교차 방향이 동시에 녹색</td><td>두 방향 제공을 중지. 계획 녹색은 넣지 않음. 어긋난 방향만 적고, 세 주기 맞으면 복귀</td></tr>
+            <tr><td>수집이 여러 주기 끊김</td><td>빈 구간을 계획으로 채우지 않음. 지연 후 이슈. 세 주기 맞으면 복귀</td></tr>
+            <tr><td>수신이 계획과 계속 다름</td><td>틀린 값은 제공하지 않음. 매핑, 시각, 현시, 현장 순으로 원인을 가림</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="slide" data-title="다음">
+      <div class="slide-inner">
+        <p class="eyebrow">Next · Week 8</p>
+        <h2>다음 주 할 일</h2>
+        <div class="grid two">
+          <div class="card">
+            <h3>중간보고</h3>
+            <p>중간보고서를 작성합니다.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide slide-cover" data-title="질의응답">
+      <div class="slide-inner">
+        <div class="cover-title">
+          <p class="eyebrow">Q &amp; A</p>
+          <h1>질의응답</h1>
+          <p class="cover-team"><b>조찬희</b> · <b>기경현</b></p>
+        </div>
+        <div class="cover-mark">
+          <div class="name">Signal<br />Guard</div>
+        </div>
+      </div>
+    </section>
+  </template>
+
+  <script src="vendor/marked.min.js"></script>
+  <script src="docs.js?v=w7b"></script>
+  <script src="deck.js"></script>
+</body>
+</html>

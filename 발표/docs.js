@@ -119,6 +119,21 @@ window.SG_DOCS = [
     title: "클릭 프로토타입",
     path: "프로토타입/index.html",
     type: "file"
+  },
+  {
+    id: "midterm",
+    phase: "중간 보고",
+    week: "9",
+    title: "중간보고서",
+    path: "과제 제출 파일/중간보고서.md"
+  },
+  {
+    id: "midterm-docx",
+    phase: "중간 보고",
+    week: "9",
+    title: "중간보고서 워드",
+    path: "과제 제출 파일/중간보고서.docx",
+    type: "file"
   }
 ];
 

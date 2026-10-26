@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ko" data-base="../">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Signal Guard — 9주차 중간 보고</title>
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="deck.css?v=dl1" />
+  <style>
+    .slide.shot { padding: 0; background: #070b14; }
+    .slide.shot img { width: 100%; height: 100%; object-fit: contain; background: #070b14; }
+  </style>
+</head>
+<body class="deck-page">
+  <div class="stage">
+    <header class="top">
+      <a class="brand" href="../index.html">
+        <div class="lamps" aria-hidden="true">
+          <i class="lamp red"></i><i class="lamp amber"></i><i class="lamp green"></i>
+        </div>
+        <div>
+          <strong>Signal Guard</strong>
+          <span>실시간 교통신호 상태정보 오류검지</span>
+        </div>
+      </a>
+      <div class="meta">
+        <span>9주차 중간 보고</span>
+        <a class="ghost" href="../index.html">목록</a>
+      </div>
+    </header>
+    <main id="deck"></main>
+    <footer class="bar">
+      <button class="nav-btn" id="prev" type="button">이전</button>
+      <div class="progress"><i id="bar"></i></div>
+      <div class="hint"><span id="pos">1</span> / <span id="total">0</span> · 방향키</div>
+      <button class="nav-btn" id="next" type="button">다음</button>
+    </footer>
+  </div>
+
+  <template id="slides">
+    <section class="slide shot" data-title="표지"><img src="w9/01.png?v=w9b" alt="9주차 보고 표지" /></section>
+    <section class="slide shot" data-title="목차"><img src="w9/02.png?v=w9b" alt="목차" /></section>
+    <section class="slide shot" data-title="개요"><img src="w9/03.png?v=w9b" alt="프로젝트 개요" /></section>
+    <section class="slide shot" data-title="범위"><img src="w9/04.png?v=w9b" alt="범위" /></section>
+    <section class="slide shot" data-title="주요 변경점"><img src="w9/05.png?v=w9b" alt="주요 변경점" /></section>
+    <section class="slide shot" data-title="오류 처리 방법"><img src="w9/06.png?v=w9b" alt="오류 처리 방법" /></section>
+    <section class="slide shot" data-title="초기 계획"><img src="w9/07.png?v=w9b" alt="초기 계획" /></section>
+    <section class="slide shot" data-title="계획 대비 진행 현황"><img src="w9/08.png?v=w9b" alt="계획 대비 진행 현황" /></section>
+    <section class="slide shot" data-title="단계별 산출물"><img src="w9/09.png?v=w9b" alt="단계별 산출물" /></section>
+    <section class="slide shot" data-title="향후 계획"><img src="w9/10.png?v=w9b" alt="향후 계획" /></section>
+    <section class="slide shot" data-title="질의응답"><img src="w9/11.png?v=w9b" alt="감사합니다" /></section>
+  </template>
+
+  <script src="vendor/marked.min.js"></script>
+  <script src="docs.js?v=w9b"></script>
+  <script src="deck.js"></script>
+</body>
+</html>

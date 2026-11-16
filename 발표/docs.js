@@ -239,6 +239,12 @@ SG.renderDocInto = async function (el, doc) {
 
 window.SG_WEEKS = [
   {
+    week: "12주차",
+    title: "주간 보고",
+    href: "발표/12주차.html",
+    note: "오류 검지 통합 시험 · 배포와 강동구"
+  },
+  {
     week: "11주차",
     title: "주간 보고",
     href: "발표/11주차.html",
